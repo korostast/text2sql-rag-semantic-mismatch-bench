@@ -1,6 +1,8 @@
 import sys
 import argparse
 import multiprocessing as mp
+import json
+import os
 from func_timeout import func_timeout, FunctionTimedOut
 from evaluation_utils import (
     load_jsonl,
@@ -25,6 +27,8 @@ def calculate_ex(predicted_res, ground_truth_res):
 def execute_model(
     predicted_sql, ground_truth, db_place, idx, meta_time_out, sql_dialect
 ):
+    executable = True
+    error = None
     try:
         res = func_timeout(
             meta_time_out,
@@ -34,12 +38,20 @@ def execute_model(
     except KeyboardInterrupt:
         sys.exit(0)
     except FunctionTimedOut:
-        result = [(f"timeout",)]
+        executable = False
+        error = "timeout"
         res = 0
     except Exception as e:
-        result = [(f"error",)]  # possibly len(query) > 512 or not executable
+        executable = False
+        error = str(e)
         res = 0
-    result = {"sql_idx": idx, "res": res}
+    result = {
+        "sql_idx": idx,
+        "res": res,
+        "executable": executable,
+        "error": error,
+        "predicted_sql": predicted_sql
+    }
     return result
 
 
@@ -106,6 +118,27 @@ def compute_acc_by_diff(exec_results, diff_json_path):
     )
 
 
+def generate_evaluated_json(
+    diff_json_path, predicted_sql_path, predicted_sqls, exec_results, output_dir="eval_result"
+):
+    contents = load_jsonl(diff_json_path)
+    base_filename = os.path.basename(predicted_sql_path).replace('.json', '')
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, f"{base_filename}_evaluated.json")
+    
+    evaluated_data = []
+    for i, content in enumerate(contents):
+        enhanced_sample = content.copy()
+        enhanced_sample["predicted_sql"] = predicted_sqls[i]
+        enhanced_sample["executable"] = exec_results[i]["executable"]
+        enhanced_sample["error"] = exec_results[i]["error"]
+        enhanced_sample["metric_value"] = exec_results[i]["res"]
+        evaluated_data.append(enhanced_sample)
+    
+    with open(output_path, "w") as f:
+        json.dump(evaluated_data, f, indent=2)
+    
+
 if __name__ == "__main__":
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument(
@@ -147,8 +180,16 @@ if __name__ == "__main__":
     simple_acc, moderate_acc, challenging_acc, acc, count_lists = compute_acc_by_diff(
         exec_result, args.diff_json_path
     )
-    score_lists = [simple_acc, moderate_acc, challenging_acc, acc] 
+    score_lists = [simple_acc, moderate_acc, challenging_acc, acc]
     print_data(score_lists, count_lists, metric="EX",result_log_file=args.output_log_path)
+    
+    generate_evaluated_json(
+        diff_json_path=args.diff_json_path,
+        predicted_sql_path=args.predicted_sql_path,
+        predicted_sqls=pred_queries,
+        exec_results=exec_result,
+        output_dir="eval_result"
+    )
     print(
         "==========================================================================================="
     )
