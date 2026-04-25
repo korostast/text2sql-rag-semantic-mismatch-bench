@@ -90,11 +90,9 @@ class TrainingDataIndexer:
         """
         Load training data from JSON file
         """
-        print(f"Loading training data from {train_path}...")
         with open(train_path, encoding="utf-8") as f:
             data = json.load(f)
 
-        print(f"Loaded {len(data)} training examples")
         return data
 
     def index_data(self, data: list[dict], batch_size: int = 10):
@@ -142,8 +140,6 @@ class TrainingDataIndexer:
             response = self.client.bulk(body=body)
             if response.get("errors"):
                 print(f"Errors in bulk indexing: {response}")
-            else:
-                print(f"Successfully indexed {len(documents)} documents")
         except Exception as e:
             print(f"Error in bulk indexing: {e}")
 

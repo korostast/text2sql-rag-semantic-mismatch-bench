@@ -83,13 +83,13 @@ def generate_sql_file(sql_lst, output_path=None):
     return result
 
 
-def init_client(api_key, api_base, engine):
+def init_client(llm_api_key, llm_url):
     """
     Initialize the OpenAI client for a worker.
     """
     return OpenAI(
-        api_key=api_key,
-        base_url=api_base,
+        api_key=llm_api_key,
+        base_url=llm_url,
     )
 
 
@@ -105,8 +105,8 @@ def worker_function(question_data):
     Function to process each question, set up the client,
     generate the prompt, and collect the GPT response.
     """
-    prompt, engine, client, db_path, question, i = question_data
-    response = connect_gpt(engine, prompt, 4096, 0, [], client)
+    prompt, llm_model, client, db_path, question, i = question_data
+    response = connect_gpt(llm_model, prompt, 4096, 0, [], client)
     sql = post_process_response(response, db_path)
     print(f"Processed {i}th question: {question}")
     return sql, i
@@ -115,9 +115,9 @@ def worker_function(question_data):
 def collect_response_from_gpt(
     db_path_list,
     question_list,
-    api_key,
-    engine,
-    api_base,
+    llm_api_key,
+    llm_model,
+    llm_url,
     sql_dialect,
     num_threads=3,
     knowledge_list=None,
@@ -130,7 +130,7 @@ def collect_response_from_gpt(
     """
     Collect responses from GPT using multiple threads.
     """
-    client = init_client(api_key, api_base, engine)
+    client = init_client(llm_api_key, llm_url)
 
     tasks = []
     for i in tqdm(range(len(question_list)), desc="Constructing prompt for all the questions"):
@@ -158,7 +158,7 @@ def collect_response_from_gpt(
                     knowledge=knowledge_list[i] if knowledge_list else None,
                     few_shot_examples=few_shot_examples,
                 ),
-                engine,
+                llm_model,
                 client,
                 db_path_list[i],
                 question_list[i],
@@ -181,9 +181,9 @@ if __name__ == "__main__":
     args_parser.add_argument("--test_path", type=str, default="")
     args_parser.add_argument("--use_knowledge", type=str, default="False")
     args_parser.add_argument("--db_root_path", type=str, default="")
-    args_parser.add_argument("--api_key", type=str, required=True)
-    args_parser.add_argument("--base_url", type=str, required=True)
-    args_parser.add_argument("--engine", type=str, required=True, default="code-davinci-002")
+    args_parser.add_argument("--llm_api_key", type=str, required=True)
+    args_parser.add_argument("--llm_url", type=str, required=True)
+    args_parser.add_argument("--llm_model", type=str, required=True, default="code-davinci-002")
     args_parser.add_argument("--data_output_path", type=str)
     args_parser.add_argument("--chain_of_thought", type=str)
     args_parser.add_argument("--num_processes", type=int, default=3)
@@ -206,9 +206,9 @@ if __name__ == "__main__":
         responses = collect_response_from_gpt(
             db_path_list,
             question_list,
-            args.api_key,
-            args.engine,
-            args.base_url,
+            args.llm_api_key,
+            args.llm_model,
+            args.llm_url,
             args.sql_dialect,
             args.num_processes,
             knowledge_list,
@@ -222,9 +222,9 @@ if __name__ == "__main__":
         responses = collect_response_from_gpt(
             db_path_list,
             question_list,
-            args.api_key,
-            args.engine,
-            args.base_url,
+            args.llm_api_key,
+            args.llm_model,
+            args.llm_url,
             args.sql_dialect,
             args.num_processes,
             None,
@@ -241,7 +241,7 @@ if __name__ == "__main__":
             + "predict_"
             + args.mode
             + "_"
-            + args.engine
+            + args.llm_model
             + "_cot"
             + "_"
             + args.sql_dialect
@@ -253,7 +253,7 @@ if __name__ == "__main__":
             + "predict_"
             + args.mode
             + "_"
-            + args.engine
+            + args.llm_model
             + "_"
             + args.sql_dialect
             + ".json"
@@ -262,7 +262,7 @@ if __name__ == "__main__":
 
     print(
         "successfully collect results from {} for {} evaluation; SQL dialect {} Use knowledge: {}; Use COT: {}; Use dynamic few-shot: {}".format(
-            args.engine,
+            args.llm_model,
             args.mode,
             args.sql_dialect,
             args.use_knowledge,
