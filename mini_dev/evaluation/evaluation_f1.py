@@ -1,14 +1,15 @@
-import sys
 import argparse
 import multiprocessing as mp
-from func_timeout import func_timeout, FunctionTimedOut
+import sys
+
 from evaluation_utils import (
-    load_jsonl,
     execute_sql,
+    load_jsonl,
     package_sqls,
-    sort_results,
     print_data,
+    sort_results,
 )
+from func_timeout import FunctionTimedOut, func_timeout
 
 
 def calculate_row_match(predicted_row, ground_truth_row):
@@ -75,9 +76,7 @@ def calculate_f1_score(predicted, ground_truth):
             truth_only_scores.append(1)
             continue
         pred_row = predicted[i]
-        match_score, pred_only_score, truth_only_score = calculate_row_match(
-            pred_row, gt_row
-        )
+        match_score, pred_only_score, truth_only_score = calculate_row_match(pred_row, gt_row)
         match_scores.append(match_score)
         pred_only_scores.append(pred_only_score)
         truth_only_scores.append(truth_only_score)
@@ -95,9 +94,7 @@ def calculate_f1_score(predicted, ground_truth):
     precision = tp / (tp + fp) if tp + fp > 0 else 0
     recall = tp / (tp + fn) if tp + fn > 0 else 0
 
-    f1_score = (
-        2 * precision * recall / (precision + recall) if precision + recall > 0 else 0
-    )
+    f1_score = 2 * precision * recall / (precision + recall) if precision + recall > 0 else 0
     return f1_score
 
 
@@ -105,9 +102,7 @@ def result_callback(result):
     exec_result.append(result)
 
 
-def execute_model(
-    predicted_sql, ground_truth, db_place, idx, meta_time_out, sql_dialect
-):
+def execute_model(predicted_sql, ground_truth, db_place, idx, meta_time_out, sql_dialect):
     try:
         res = func_timeout(
             meta_time_out,
@@ -123,10 +118,10 @@ def execute_model(
     except KeyboardInterrupt:
         sys.exit(0)
     except FunctionTimedOut:
-        result = [(f"timeout",)]
+        result = [("timeout",)]
         res = 0
-    except Exception as e:
-        result = [(f"error",)]  # possibly len(query) > 512 or not executable
+    except Exception:
+        result = [("error",)]  # possibly len(query) > 512 or not executable
         res = 0
     # print(result)
     # result = str(set([ret[0] for ret in result]))
@@ -135,9 +130,7 @@ def execute_model(
     return result
 
 
-def run_sqls_parallel(
-    sqls, db_places, num_cpus=1, meta_time_out=30.0, sql_dialect="SQLite"
-):
+def run_sqls_parallel(sqls, db_places, num_cpus=1, meta_time_out=30.0, sql_dialect="SQLite"):
     pool = mp.Pool(processes=num_cpus)
     for i, sql_pair in enumerate(sqls):
 
@@ -175,13 +168,9 @@ def compute_f1_by_diff(exec_results, diff_json_path):
             challenging_results.append(exec_results[i])
 
     simple_f1 = sum([res["res"] for res in simple_results]) / len(simple_results) * 100
-    moderate_f1 = (
-        sum([res["res"] for res in moderate_results]) / len(moderate_results) * 100
-    )
+    moderate_f1 = sum([res["res"] for res in moderate_results]) / len(moderate_results) * 100
     challenging_f1 = (
-        sum([res["res"] for res in challenging_results])
-        / len(challenging_results)
-        * 100
+        sum([res["res"] for res in challenging_results]) / len(challenging_results) * 100
     )
     all_f1 = sum(results) / num_queries * 100
     count_lists = [
@@ -201,9 +190,7 @@ def compute_f1_by_diff(exec_results, diff_json_path):
 
 if __name__ == "__main__":
     args_parser = argparse.ArgumentParser()
-    args_parser.add_argument(
-        "--predicted_sql_path", type=str, required=True, default=""
-    )
+    args_parser.add_argument("--predicted_sql_path", type=str, required=True, default="")
     args_parser.add_argument("--ground_truth_path", type=str, required=True, default="")
     args_parser.add_argument("--db_root_path", type=str, required=True, default="")
     args_parser.add_argument("--num_cpus", type=int, default=1)
@@ -214,9 +201,7 @@ if __name__ == "__main__":
     args = args_parser.parse_args()
     exec_result = []
 
-    pred_queries, db_paths = package_sqls(
-        args.predicted_sql_path, args.db_root_path, mode="pred"
-    )
+    pred_queries, db_paths = package_sqls(args.predicted_sql_path, args.db_root_path, mode="pred")
     # generate ground truth sqls:
     gt_queries, db_paths_gt = package_sqls(
         args.ground_truth_path,
@@ -240,9 +225,7 @@ if __name__ == "__main__":
         exec_result, args.diff_json_path
     )
     score_lists = [simple_acc, moderate_acc, challenging_acc, acc]
-    print_data(
-        score_lists, count_lists, metric="Soft-F1", result_log_file=args.output_log_path
-    )
+    print_data(score_lists, count_lists, metric="Soft-F1", result_log_file=args.output_log_path)
     print(
         "==========================================================================================="
     )

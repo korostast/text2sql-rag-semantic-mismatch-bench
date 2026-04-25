@@ -41,7 +41,7 @@ python xxx/prompt_generator.py \
     --data_path_base $data_path_base
 ```
 
-The generated jsonl file will contain a `prompt` field. Then you can use your favorite LLM to generate SQL queries based on the provided prompt. 
+The generated jsonl file will contain a `prompt` field. Then you can use your favorite LLM to generate SQL queries based on the provided prompt.
 
 ### 🛠️ Process
 After you generate SQL queries using the prompts, you can use the following script to postprocess the generated SQL queries (assume the input is a jsonl file with a `response` field):

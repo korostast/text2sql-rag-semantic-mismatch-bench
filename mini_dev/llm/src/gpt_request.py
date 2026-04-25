@@ -1,15 +1,14 @@
-#!/usr/bin/env python3
 import argparse
+import concurrent.futures
 import json
 import os
-from openai import OpenAI
-from tqdm import tqdm
 import time
 from concurrent.futures import ThreadPoolExecutor
-import concurrent.futures
 
-from prompt import generate_combined_prompts_one
+from openai import OpenAI
 from opensearch_search import search_similar_examples
+from prompt import generate_combined_prompts_one
+from tqdm import tqdm
 
 
 def new_directory(path):
@@ -48,7 +47,7 @@ def connect_gpt(engine, prompt, max_tokens, temperature, stop, client):
                 )
             break
         except Exception as e:
-            result = "error:{}".format(e)
+            result = f"error:{e}"
             print(result)
             time.sleep(4)
     return result
@@ -60,7 +59,7 @@ def decouple_question_schema(datasets, db_root_path):
     knowledge_list = []
     for i, data in enumerate(datasets):
         question_list.append(data["question"])
-        cur_db_path = db_root_path + data["db_id"] + "/" + data["db_id"] + ".sqlite"
+        cur_db_path = f"{db_root_path}{data['db_id']}/{data['db_id']}.sqlite"
         db_path_list.append(cur_db_path)
         knowledge_list.append(data["evidence"])
 
@@ -144,12 +143,12 @@ def collect_response_from_gpt(
                     opensearch_url=opensearch_url,
                     embedder_url=embedder_url,
                     embedder_model=embedder_model,
-                    embedder_api_key=embedder_api_key
+                    embedder_api_key=embedder_api_key,
                 )
             except Exception as e:
                 print(f"Error searching for similar examples for question {i}: {e}")
                 few_shot_examples = None
-        
+
         tasks.append(
             (
                 generate_combined_prompts_one(
@@ -166,15 +165,11 @@ def collect_response_from_gpt(
                 i,
             )
         )
-    
+
     responses = []
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
-        future_to_task = {
-            executor.submit(worker_function, task): task for task in tasks
-        }
-        for future in tqdm(
-            concurrent.futures.as_completed(future_to_task), total=len(tasks)
-        ):
+        future_to_task = {executor.submit(worker_function, task): task for task in tasks}
+        for future in tqdm(concurrent.futures.as_completed(future_to_task), total=len(tasks)):
             responses.append(future.result())
     return responses
 
@@ -188,9 +183,7 @@ if __name__ == "__main__":
     args_parser.add_argument("--db_root_path", type=str, default="")
     args_parser.add_argument("--api_key", type=str, required=True)
     args_parser.add_argument("--base_url", type=str, required=True)
-    args_parser.add_argument(
-        "--engine", type=str, required=True, default="code-davinci-002"
-    )
+    args_parser.add_argument("--engine", type=str, required=True, default="code-davinci-002")
     args_parser.add_argument("--data_output_path", type=str)
     args_parser.add_argument("--chain_of_thought", type=str)
     args_parser.add_argument("--num_processes", type=int, default=3)
@@ -202,7 +195,7 @@ if __name__ == "__main__":
     args_parser.add_argument("--embedder_api_key", type=str, default="")
     args = args_parser.parse_args()
 
-    eval_data = json.load(open(args.eval_path, "r"))
+    eval_data = json.load(open(args.eval_path))
 
     question_list, db_path_list, knowledge_list = decouple_question_schema(
         datasets=eval_data, db_root_path=args.db_root_path

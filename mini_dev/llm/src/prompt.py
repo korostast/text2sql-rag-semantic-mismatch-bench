@@ -1,5 +1,4 @@
 from table_schema import generate_schema_prompt
-from typing import List, Dict, Optional
 
 
 def generate_comment_prompt(question, sql_dialect, knowledge=None):
@@ -21,7 +20,7 @@ def generate_cot_prompt(sql_dialect):
 
 def generate_instruction_prompt(sql_dialect):
     return f"""
-        \nIn your response, you do not need to mention your intermediate steps. 
+        \nIn your response, you do not need to mention your intermediate steps.
         Do not include any comments in your response.
         Do not need to start with the symbol ```
         You only need to return the result {sql_dialect} SQL code
@@ -29,25 +28,25 @@ def generate_instruction_prompt(sql_dialect):
         """
 
 
-def generate_few_shot_examples(few_shot_examples: List[Dict]) -> str:
+def generate_few_shot_examples(few_shot_examples: list[dict]) -> str:
     """
     Generate few-shot examples section for the prompt
     """
     if not few_shot_examples:
         return ""
-    
+
     examples_text = "-- Here are some similar examples to help you understand the task:\n\n"
-    
+
     for i, example in enumerate(few_shot_examples, 1):
         examples_text += f"-- Example {i}:\n"
         examples_text += f"-- Question: {example.get('question', '')}\n"
-        
-        evidence = example.get('evidence', '')
+
+        evidence = example.get("evidence", "")
         if evidence:
             examples_text += f"-- Evidence: {evidence}\n"
-        
+
         examples_text += f"-- SQL: {example.get('sql', '')}\n\n"
-    
+
     return examples_text
 
 
@@ -55,8 +54,8 @@ def generate_combined_prompts_one(
     db_path: str,
     question: str,
     sql_dialect: str,
-    knowledge: Optional[str] = None,
-    few_shot_examples: Optional[List[Dict]] = None
+    knowledge: str | None = None,
+    few_shot_examples: list[dict] | None = None,
 ) -> str:
     """
     Generate combined prompt with optional few-shot examples

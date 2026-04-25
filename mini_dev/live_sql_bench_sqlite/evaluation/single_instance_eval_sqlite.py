@@ -1,39 +1,37 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Fixed single instance evaluation script for SQLite
 """
 
 import argparse
-import json
-import sys
-import os
-import io
-import traceback
-import time
 import gc
+import io
+import json
+import os
+import sys
+import time
+import traceback
 from datetime import date
 
-# Local imports
-from logger import configure_logger, NullLogger
-from utils import load_jsonl, split_field
 from db_utils import (
-    perform_query_on_sqlite_databases,
     close_sqlite_connection,
     execute_queries,
     get_connection_for_phase,
+    perform_query_on_sqlite_databases,
     reset_and_restore_database,
 )
+
+# Local imports
+from logger import NullLogger, configure_logger
 from test_utils import (
-    check_sql_function_usage,
-    remove_round,
-    remove_distinct,
-    remove_comments,
-    preprocess_results,
-    ex_base,
     TEST_CASE_DEFAULT,
-    test_case_default,
+    check_sql_function_usage,
+    ex_base,
+    preprocess_results,
+    remove_comments,
+    remove_distinct,
+    remove_round,
 )
+from utils import load_jsonl, split_field
 
 
 def run_test_case(test_code, result, logger, conn, pred_sqls, sol_sqls, db_path, kwargs):
@@ -58,31 +56,33 @@ def run_test_case(test_code, result, logger, conn, pred_sqls, sol_sqls, db_path,
         "kwargs": kwargs,
     }
 
-    logger.info(f"Executing test case")
-    
+    logger.info("Executing test case")
+
     old_stdout = sys.stdout
     mystdout = io.StringIO()
     sys.stdout = mystdout
 
     try:
-        test_case_code = "import datetime\nfrom datetime import date\n" + test_code
-        test_case_code += "\n__test_case_result__ = test_case(pred_sqls, sol_sqls, db_path, conn, **kwargs)"
-        
+        test_case_code = f"import datetime\nfrom datetime import date\n{test_code}"
+        test_case_code += (
+            "\n__test_case_result__ = test_case(pred_sqls, sol_sqls, db_path, conn, **kwargs)"
+        )
+
         exec(test_case_code, global_env, local_env)
-        logger.info(f"Test case passed.")
+        logger.info("Test case passed.")
         test_passed = True
         error_message = ""
-        
+
     except AssertionError as e:
         logger.error(f"Test case failed due to assertion error: {e}")
         error_message = f"Test case failed due to assertion error: {e}\n"
         test_passed = False
-        
+
     except Exception as e:
         logger.error(f"Test case failed due to error: {e}")
         error_message = f"Test case failed due to error: {e}\n"
         test_passed = False
-        
+
     finally:
         sys.stdout = old_stdout
 
@@ -121,14 +121,16 @@ def execute_test_cases(test_cases, sql_result, logger, conn, pred_sqls, sol_sqls
     return passed_count, failed_tests, test_error_messages
 
 
-def run_evaluation_phase(pred_sqls, sol_sqls, db_path, test_cases, logger, conn, efficiency, kwargs):
+def run_evaluation_phase(
+    pred_sqls, sol_sqls, db_path, test_cases, logger, conn, efficiency, kwargs
+):
     """Execute evaluation phase"""
     error_message = ""
     sol_sql_result, exec_error_flag, timeout_flag, error_msg = execute_queries(
         pred_sqls, db_path, conn, logger, section_title="LLM Generated SQL", return_error=True
     )
     error_message += error_msg
-    
+
     instance_execution_error = exec_error_flag
     instance_timeout_error = timeout_flag
     instance_assertion_error = False
@@ -164,7 +166,7 @@ def run_preprocessing(preprocess_sql, db_path, logger, conn):
 def evaluate_instance(data, args, logger):
     """Evaluate a single instance and return results"""
     instance_id = data.get("instance_id", "unknown")
-    
+
     # Check for required fields
     required_fields = ["selected_database", "preprocess_sql", "sol_sql"]
     if args.mode == "pred":
@@ -199,9 +201,9 @@ def evaluate_instance(data, args, logger):
         pred_sqls = split_field(data, "sol_sql")
     else:
         pred_sqls = split_field(data, "pred_sqls")
-    
+
     sol_sqls = split_field(data, "sol_sql")
-    
+
     # Set up kwargs
     kwargs = {}
     if not test_cases:
@@ -216,7 +218,7 @@ def evaluate_instance(data, args, logger):
     else:
         db_path = f"/Volumes/SN770/livesql_sqlite/database/{db_name}/{db_name}.sqlite"
         logger.info(f"Using main database: {db_path}")
-    
+
     # Get connection with retry
     db_connection = None
     max_retries = 3
@@ -270,9 +272,11 @@ def evaluate_instance(data, args, logger):
 
         # Determine status
         ret_status = "success"
-        if (evaluation_phase_execution_error or 
-            evaluation_phase_timeout_error or 
-            evaluation_phase_assertion_error):
+        if (
+            evaluation_phase_execution_error
+            or evaluation_phase_timeout_error
+            or evaluation_phase_assertion_error
+        ):
             ret_status = "failed"
 
         return {
@@ -319,11 +323,23 @@ def evaluate_instance(data, args, logger):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Execute a single SQL solution and test case (SQLite).")
-    parser.add_argument("--jsonl_file", help="Path to the JSONL file containing the dataset instance.", required=True)
-    parser.add_argument("--output_file", required=True, help="Path to the JSON file for output with evaluation results.")
+    parser = argparse.ArgumentParser(
+        description="Execute a single SQL solution and test case (SQLite)."
+    )
+    parser.add_argument(
+        "--jsonl_file",
+        help="Path to the JSONL file containing the dataset instance.",
+        required=True,
+    )
+    parser.add_argument(
+        "--output_file",
+        required=True,
+        help="Path to the JSON file for output with evaluation results.",
+    )
     parser.add_argument("--mode", help="gold or pred", choices=["gold", "pred"], default="pred")
-    parser.add_argument("--logging", type=str, default="true", help="Enable or disable logging ('true' or 'false').")
+    parser.add_argument(
+        "--logging", type=str, default="true", help="Enable or disable logging ('true' or 'false')."
+    )
     parser.add_argument("--log_file", type=str, help="Specific path for the log file.")
 
     args = parser.parse_args()
@@ -343,7 +359,7 @@ def main():
             if args.log_file:
                 log_filename = args.log_file
             else:
-                log_filename = os.path.splitext(args.jsonl_file)[0] + f"_instance_{instance_id}.log"
+                log_filename = f"{os.path.splitext(args.jsonl_file)[0]}_instance_{instance_id}.log"
                 print(f"Using log file: {log_filename}")
             logger = configure_logger(log_filename)
         else:
@@ -358,9 +374,11 @@ def main():
         with open(args.output_file, "w") as f:
             json.dump(evaluation_result, f)
 
-        logger.info(f"Evaluation completed for instance {instance_id}: {evaluation_result['status']}")
+        logger.info(
+            f"Evaluation completed for instance {instance_id}: {evaluation_result['status']}"
+        )
         sys.exit(0)
-        
+
     except Exception as e:
         print(f"Error evaluating instance: {e}")
         traceback.print_exc()

@@ -1,5 +1,5 @@
+#!/bin/bash
 eval_path='../data/mini_dev_sqlite.json' # _sqlite.json, _mysql.json, _postgresql.json
-dev_path='./output/'
 db_root_path='../data/dev_databases/'
 use_knowledge='True'
 mode='mini_dev' # dev, train, mini_dev
@@ -15,12 +15,11 @@ engine='openai/gpt-oss-120b'
 num_threads=3
 
 # Choose the SQL dialect to run, e.g. SQLite, MySQL, PostgreSQL
-# PLEASE NOTE: You have to setup the database information in table_schema.py 
+# PLEASE NOTE: You have to setup the database information in table_schema.py
 # if you want to run the evaluation script using MySQL or PostgreSQL
 sql_dialect='SQLite'
 
 # Choose the output path for the generated SQL queries
-data_output_path='./exp_result/turbo_output/'
 data_kg_output_path='./exp_result/turbo_output_kg/'
 
 # Dynamic few-shot examples configuration

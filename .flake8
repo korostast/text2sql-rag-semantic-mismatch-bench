@@ -1,0 +1,21 @@
+[flake8]
+max-line-length = 100
+extend-ignore = E203, E501, W503
+plugins =
+    flake8-pydantic
+    flake8-bugbear
+    flake8-comprehensions
+    flake8-builtins
+    flake8-pytest-style
+    flake8-use-fstring
+    flake8-use-pathlib
+    flake8-print
+    pep8-naming
+
+extend-immutable-calls = Depends, Path, Body, Query, Header
+
+per-file-ignores =
+    __init__.py:F401
+    app/core/time.py:A005
+
+builtins-ignorelist = id, object, type, input, filter

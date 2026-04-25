@@ -353,7 +353,7 @@
     "351": "select cards.id, rulings.text\nfrom cards\ninner join rulings on cards.uuid = rulings.uuid\nwhere cards.artist = 'Stephen Daniele'\t----- bird -----\tcard_games",
     "352": "select \n    cards.name, \n    cards.artist, \n    cards.isPromo \nfrom \n    cards \ninner join \n    rulings \non \n    cards.uuid = rulings.uuid \ngroup by \n    cards.id \norder by \n    count(rulings.uuid) desc \nlimit 1\t----- bird -----\tcard_games",
     "353": "select (cast(count(*) as real) * 100 / (select count(*) from foreign_data)) as percentage\nfrom foreign_data\nwhere language = 'Chinese Simplified'\t----- bird -----\tcard_games",
-    "354": "select count(*) \nfrom cards \nwhere power = '\u221e'\t----- bird -----\tcard_games",
+    "354": "select count(*) \nfrom cards \nwhere power = '∞'\t----- bird -----\tcard_games",
     "355": "select borderColor \nfrom cards \nwhere name = 'Ancestor''s Chosen'\t----- bird -----\tcard_games",
     "356": "select legalities.format \nfrom cards \ninner join legalities on cards.uuid = legalities.uuid \nwhere cards.name = 'Benalish Knight'\t----- bird -----\tcard_games",
     "357": "select cast(count(id) filter (where borderColor = 'borderless') as real) * 100 / count(id) as percentage\nfrom cards\t----- bird -----\tcard_games",

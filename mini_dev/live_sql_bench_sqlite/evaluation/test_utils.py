@@ -1,10 +1,11 @@
-import re
-from datetime import date, datetime
-from db_utils import perform_query_on_sqlite_databases, execute_queries
-import sqlite3
 import json
-from decimal import Decimal, ROUND_HALF_UP
 import logging
+import re
+import sqlite3
+from datetime import date, datetime
+from decimal import ROUND_HALF_UP, Decimal
+
+from db_utils import execute_queries, perform_query_on_sqlite_databases
 
 
 def process_decimals(results, decimal_places):
@@ -130,9 +131,7 @@ def process_decimals_recursive(item, decimal_places):
     elif isinstance(item, (list, tuple)):
         return type(item)(process_decimals_recursive(x, decimal_places) for x in item)
     elif isinstance(item, dict):
-        return {
-            k: process_decimals_recursive(v, decimal_places) for k, v in item.items()
-        }
+        return {k: process_decimals_recursive(v, decimal_places) for k, v in item.items()}
     else:
         return item
 
@@ -225,9 +224,7 @@ def ex_base(pred_sqls, sol_sqls, db_path, conn, conditions=None):
     if not pred_sqls or not sol_sqls:
         return 0
 
-    predicted_res, pred_err, pred_to = execute_queries(
-        pred_sqls, db_path, conn, None, ""
-    )
+    predicted_res, pred_err, pred_to = execute_queries(pred_sqls, db_path, conn, None, "")
     print(f"Predicted results: {predicted_res}")
     ground_res, gt_err, gt_to = execute_queries(sol_sqls, db_path, conn, None, "")
     print(f"Ground truth results: {ground_res}")
@@ -287,9 +284,7 @@ def performance_compare_by_qep(old_sqls, sol_sqls, db_path, conn):
 
             explain_sql = f"EXPLAIN QUERY PLAN {sql}"
             try:
-                result_rows, _ = perform_query_on_sqlite_databases(
-                    explain_sql, db_path, conn=conn
-                )
+                result_rows, _ = perform_query_on_sqlite_databases(explain_sql, db_path, conn=conn)
                 if not result_rows:
                     print(f"[measure_sqls_cost] No result returned for EXPLAIN: {sql}")
                     continue
@@ -320,9 +315,7 @@ def performance_compare_by_qep(old_sqls, sol_sqls, db_path, conn):
     finally:
         perform_query_on_sqlite_databases("ROLLBACK", db_path, conn=conn)
 
-    print(
-        f"[performance_compare_by_qep] Compare old({old_total_cost}) vs. sol({sol_total_cost})"
-    )
+    print(f"[performance_compare_by_qep] Compare old({old_total_cost}) vs. sol({sol_total_cost})")
     return 1 if sol_total_cost < old_total_cost else 0
 
 

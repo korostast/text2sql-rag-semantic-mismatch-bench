@@ -1,6 +1,7 @@
 import sqlite3
-import pymysql
+
 import psycopg2
+import pymysql
 
 db_table_map = {
     "debit_card_specializing": [
@@ -98,16 +99,14 @@ def nice_look_table(column_names: list, values: list):
     ]
 
     # Print the column names
-    header = "".join(
-        f"{column.rjust(width)} " for column, width in zip(column_names, widths)
-    )
+    header = "".join(f"{column.rjust(width)} " for column, width in zip(column_names, widths))
     # print(header)
     # Print the values
     for value in values:
         row = "".join(f"{str(v).rjust(width)} " for v, width in zip(value, widths))
         rows.append(row)
     rows = "\n".join(rows)
-    final_output = header + "\n" + rows
+    final_output = f"{header}\n{rows}"
     return final_output
 
 
@@ -128,26 +127,24 @@ def generate_schema_prompt_sqlite(db_path, num_rows=None):
     for table in tables:
         if table == "sqlite_sequence":
             continue
-        cursor.execute(
-            "SELECT sql FROM sqlite_master WHERE type='table' AND name='{}';".format(
-                table[0]
-            )
-        )
+        cursor.execute(f"SELECT sql FROM sqlite_master WHERE type='table' AND name='{table[0]}';")
         create_prompt = cursor.fetchone()[0]
         schemas[table[0]] = create_prompt
         if num_rows:
             cur_table = table[0]
             if cur_table in ["order", "by", "group"]:
-                cur_table = "`{}`".format(cur_table)
+                cur_table = f"`{cur_table}`"
 
-            cursor.execute("SELECT * FROM {} LIMIT {}".format(cur_table, num_rows))
+            cursor.execute(f"SELECT * FROM {cur_table} LIMIT {num_rows}")
             column_names = [description[0] for description in cursor.description]
             values = cursor.fetchall()
             rows_prompt = nice_look_table(column_names=column_names, values=values)
-            verbose_prompt = "/* \n {} example rows: \n SELECT * FROM {} LIMIT {}; \n {} \n */".format(
-                num_rows, cur_table, num_rows, rows_prompt
+            verbose_prompt = (
+                "/* \n {} example rows: \n SELECT * FROM {} LIMIT {}; \n {} \n */".format(
+                    num_rows, cur_table, num_rows, rows_prompt
+                )
             )
-            schemas[table[0]] = "{} \n {}".format(create_prompt, verbose_prompt)
+            schemas[table[0]] = f"{create_prompt} \n {verbose_prompt}"
 
     for k, v in schemas.items():
         full_schema_prompt_list.append(v)
@@ -183,13 +180,9 @@ def format_mysql_create_table(table_name, columns_info):
         sql_type = str.upper(data_type)
 
         null_type = "not null" if nullable == "NO" else "null"
-        primary_key_part = (
-            "primary key" if "PRI" in key and not primary_key_defined else ""
-        )
+        primary_key_part = "primary key" if "PRI" in key and not primary_key_defined else ""
         primary_key_defined = True if "PRI" in key else primary_key_defined
-        column_line = (
-            f"    `{column_name}` {sql_type} {null_type} {primary_key_part},".strip()
-        )
+        column_line = f"    `{column_name}` {sql_type} {null_type} {primary_key_part},".strip()
         lines.append(column_line)
     lines[-1] = lines[-1].rstrip(",")
     lines.append(");")
@@ -229,9 +222,7 @@ def generate_schema_prompt_mysql(db_path):
 def connect_postgresql():
     # Open database connection
     # Connect to the database
-    db = psycopg2.connect(
-        "dbname=BIRD user=root host=localhost password=YOUR_PASSWORD port=5432"
-    )
+    db = psycopg2.connect("dbname=BIRD user=root host=localhost password=YOUR_PASSWORD port=5432")
     return db
 
 
@@ -242,13 +233,11 @@ def generate_schema_prompt_postgresql(db_path):
     tables = [table for table in db_table_map[db_name]]
     schemas = {}
     for table in tables:
-        cursor.execute(
-            f"""
+        cursor.execute(f"""
                 SELECT column_name, data_type, is_nullable
                 FROM information_schema.columns
                 WHERE table_name = '{table}';
-            """
-        )
+            """)
         raw_schema = cursor.fetchall()
         pretty_schema = format_postgresql_create_table(table, raw_schema)
         schemas[table] = pretty_schema
@@ -265,4 +254,4 @@ def generate_schema_prompt(sql_dialect, db_path=None, num_rows=None):
     elif sql_dialect == "PostgreSQL":
         return generate_schema_prompt_postgresql(db_path)
     else:
-        raise ValueError("Unsupported SQL dialect: {}".format(sql_dialect))
+        raise ValueError(f"Unsupported SQL dialect: {sql_dialect}")

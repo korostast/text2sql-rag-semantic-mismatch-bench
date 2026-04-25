@@ -1,25 +1,23 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Simplified wrapper script for SQLite evaluation
 Fixed threading and queue management issues
 """
 
 import argparse
+import concurrent.futures
+import gc
 import json
 import os
-import sys
 import subprocess
+import sys
 import tempfile
 import time
-import gc
-import concurrent.futures
-import threading
 from datetime import datetime
-from tqdm import tqdm
-from logger import configure_logger
-from utils import load_jsonl, save_report_and_status
+
 from db_utils import create_ephemeral_db_copies, drop_ephemeral_dbs
+from logger import configure_logger
+from tqdm import tqdm
+from utils import load_jsonl, save_report_and_status
 
 
 def run_single_instance(instance_data, instance_id, args, ephemeral_db_path, logger):
@@ -87,7 +85,7 @@ def run_single_instance(instance_data, instance_id, args, ephemeral_db_path, log
     # Process results
     if success and os.path.exists(tmp_output) and os.path.getsize(tmp_output) > 0:
         try:
-            with open(tmp_output, "r") as f:
+            with open(tmp_output) as f:
                 evaluation_result = json.load(f)
                 evaluation_result["instance_id"] = instance_id
                 logger.info(f"Instance {instance_id} completed successfully")
@@ -121,7 +119,7 @@ def run_single_instance(instance_data, instance_id, args, ephemeral_db_path, log
 def process_instances_batch(instances_batch, ephemeral_db_paths, args, logger):
     """Process a batch of instances using available ephemeral databases"""
     results = []
-    
+
     for i, (instance_data, instance_id) in enumerate(instances_batch):
         # Use round-robin assignment of ephemeral databases
         db_name = instance_data.get("selected_database", "unknown")
@@ -129,33 +127,33 @@ def process_instances_batch(instances_batch, ephemeral_db_paths, args, logger):
             ephemeral_db_path = ephemeral_db_paths[db_name][i % len(ephemeral_db_paths[db_name])]
         else:
             logger.error(f"No ephemeral database available for {db_name}")
-            results.append({
-                "instance_id": instance_id,
-                "status": "failed",
-                "error_message": f"No ephemeral database available for {db_name}",
-                "total_test_cases": len(instance_data.get("test_cases", [])),
-                "passed_test_cases": 0,
-                "failed_test_cases": [],
-                "evaluation_phase_execution_error": True,
-                "evaluation_phase_timeout_error": False,
-                "evaluation_phase_assertion_error": False,
-            })
+            results.append(
+                {
+                    "instance_id": instance_id,
+                    "status": "failed",
+                    "error_message": f"No ephemeral database available for {db_name}",
+                    "total_test_cases": len(instance_data.get("test_cases", [])),
+                    "passed_test_cases": 0,
+                    "failed_test_cases": [],
+                    "evaluation_phase_execution_error": True,
+                    "evaluation_phase_timeout_error": False,
+                    "evaluation_phase_assertion_error": False,
+                }
+            )
             continue
-        
+
         # Run the instance
         result = run_single_instance(instance_data, instance_id, args, ephemeral_db_path, logger)
         results.append(result)
-        
+
         # Small delay to avoid overwhelming the system
         time.sleep(0.1)
-    
+
     return results
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Simplified wrapper script for SQLite evaluation"
-    )
+    parser = argparse.ArgumentParser(description="Simplified wrapper script for SQLite evaluation")
     parser.add_argument("--jsonl_file", required=True, help="Path to JSONL file")
     parser.add_argument("--db_path", required=True, help="Path to database folder")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of instances")
@@ -180,11 +178,11 @@ def main():
 
     # Apply skip and limit
     if args.skip > 0:
-        data_list = data_list[args.skip:]
+        data_list = data_list[args.skip :]
         print(f"Skipped first {args.skip} instances")
 
     if args.limit is not None:
-        data_list = data_list[:args.limit]
+        data_list = data_list[: args.limit]
         print(f"Limited to {args.limit} instances")
 
     final_count = len(data_list)
@@ -233,7 +231,7 @@ def main():
     # Split instances into batches
     batches = []
     for i in range(0, len(instances_with_ids), args.batch_size):
-        batch = instances_with_ids[i:i + args.batch_size]
+        batch = instances_with_ids[i : i + args.batch_size]
         batches.append(batch)
 
     print(f"Split {final_count} instances into {len(batches)} batches")
@@ -260,7 +258,9 @@ def main():
                 # Submit all batches
                 future_to_batch = {}
                 for batch_idx, batch in enumerate(batches):
-                    future = executor.submit(process_instances_batch, batch, ephemeral_db_pool_dict, args, logger)
+                    future = executor.submit(
+                        process_instances_batch, batch, ephemeral_db_pool_dict, args, logger
+                    )
                     future_to_batch[future] = batch_idx
 
                 # Process completed batches
@@ -301,16 +301,20 @@ def main():
     passed_instances = sum(1 for r in all_results if r["status"] == "success")
     failed_instances = total_instances - passed_instances
 
-    execution_errors = sum(1 for r in all_results if r.get("evaluation_phase_execution_error", False))
+    execution_errors = sum(
+        1 for r in all_results if r.get("evaluation_phase_execution_error", False)
+    )
     timeout_errors = sum(1 for r in all_results if r.get("evaluation_phase_timeout_error", False))
-    assertion_errors = sum(1 for r in all_results if r.get("evaluation_phase_assertion_error", False))
+    assertion_errors = sum(
+        1 for r in all_results if r.get("evaluation_phase_assertion_error", False)
+    )
 
     overall_accuracy = (passed_instances / total_instances * 100) if total_instances > 0 else 0.0
 
     # Print summary
-    print(f"\n" + "="*60)
+    print(f"\n{'=' * 60}")
     print("EVALUATION SUMMARY")
-    print("="*60)
+    print("=" * 60)
     print(f"Total instances: {total_instances}")
     print(f"Passed instances: {passed_instances}")
     print(f"Failed instances: {failed_instances}")
@@ -318,7 +322,7 @@ def main():
     print(f"Timeout errors: {timeout_errors}")
     print(f"Assertion errors: {assertion_errors}")
     print(f"Overall accuracy: {overall_accuracy:.2f}%")
-    print("="*60)
+    print("=" * 60)
 
     # Save results
     timestamp = datetime.now().isoformat(sep=" ", timespec="microseconds")
@@ -326,9 +330,15 @@ def main():
 
     try:
         save_report_and_status(
-            report_file_path, all_results, data_list,
-            execution_errors, timeout_errors, assertion_errors,
-            overall_accuracy, timestamp, logger
+            report_file_path,
+            all_results,
+            data_list,
+            execution_errors,
+            timeout_errors,
+            assertion_errors,
+            overall_accuracy,
+            timestamp,
+            logger,
         )
         print(f"\nReport saved: {report_file_path}")
     except Exception as e:
@@ -343,7 +353,7 @@ def main():
                 if i < len(all_results):
                     data["status"] = all_results[i]["status"]
                     data["error_message"] = all_results[i].get("error_message")
-                f.write(json.dumps(data) + "\n")
+                f.write(f"{json.dumps(data)}\n")
         print(f"Output saved: {output_jsonl_file}")
     except Exception as e:
         print(f"Error saving output: {e}")

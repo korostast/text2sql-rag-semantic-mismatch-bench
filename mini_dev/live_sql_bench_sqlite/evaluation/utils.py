@@ -1,7 +1,6 @@
 # utils.py
-import sys
 import json
-import re
+import sys
 
 
 def load_jsonl(file_path):
@@ -9,7 +8,7 @@ def load_jsonl(file_path):
     Loads JSONL data from file_path and returns a list of dicts.
     """
     try:
-        with open(file_path, "r") as file:
+        with open(file_path) as file:
             return [json.loads(line) for line in file]
     except Exception as e:
         print(f"Failed to load JSONL file: {e}")
@@ -58,17 +57,11 @@ def save_report_and_status(
                 "BIRD CRITIC Stack Overflow Result Statistics (Postgres, Multi-Thread):\n"
             )
             report_file.write(f"Number of Instances: {total_instances}\n")
-            report_file.write(
-                f"Number of Execution Errors: {number_of_execution_errors}\n"
-            )
+            report_file.write(f"Number of Execution Errors: {number_of_execution_errors}\n")
             report_file.write(f"Number of Timeouts: {number_of_timeouts}\n")
-            report_file.write(
-                f"Number of Assertion Errors: {number_of_assertion_errors}\n"
-            )
+            report_file.write(f"Number of Assertion Errors: {number_of_assertion_errors}\n")
             total_errors = (
-                number_of_execution_errors
-                + number_of_timeouts
-                + number_of_assertion_errors
+                number_of_execution_errors + number_of_timeouts + number_of_assertion_errors
             )
             report_file.write(f"Total Errors: {total_errors}\n")
             report_file.write(f"Overall Accuracy: {overall_accuracy:.2f}%\n")
@@ -80,9 +73,7 @@ def save_report_and_status(
                 t_total = q_res["total_test_cases"]
                 t_pass = q_res["passed_test_cases"]
                 t_fail = t_total - t_pass
-                failed_list_str = (
-                    ", ".join(q_res["failed_test_cases"]) if t_fail > 0 else "None"
-                )
+                failed_list_str = ", ".join(q_res["failed_test_cases"]) if t_fail > 0 else "None"
 
                 eval_phase_note = ""
                 if q_res.get("evaluation_phase_execution_error"):
@@ -110,9 +101,9 @@ def save_report_and_status(
                         data_list[i]["error_message"] = eval_phase_note
 
             # Add statistical summary
-            report_file.write("\n" + "=" * 50 + "\n")
+            report_file.write(f"\n{'=' * 50}\n")
             report_file.write("EXECUTION STATISTICS:\n")
-            report_file.write("=" * 50 + "\n")
+            report_file.write(f"{'=' * 50}\n")
 
             # Collect executable instances (those without syntax or execution errors)
             executable_instances = []

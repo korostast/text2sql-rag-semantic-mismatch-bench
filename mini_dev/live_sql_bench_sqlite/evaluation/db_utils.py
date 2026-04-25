@@ -1,18 +1,9 @@
 # db_utils.py
 import os
-import subprocess
-import sqlite3
 import shutil
-from logger import log_section_header, log_section_footer, PrintLogger, NullLogger
+import sqlite3
 
-import os
-import subprocess
-import sqlite3
-import shutil
-import signal
-import threading
-import time
-from logger import log_section_header, log_section_footer, PrintLogger, NullLogger
+from logger import NullLogger, log_section_footer, log_section_header
 
 
 def perform_query_on_sqlite_databases(query, db_path, conn=None, query_timeout=30):
@@ -30,20 +21,20 @@ def perform_query_on_sqlite_databases(query, db_path, conn=None, query_timeout=3
     lower_q = query.strip().lower()
     if conn is None:
         conn = sqlite3.connect(db_path, timeout=query_timeout)
-        conn.execute(f"PRAGMA busy_timeout = {query_timeout * 1000}")  # Set busy wait timeout to query_timeout seconds
+        conn.execute(
+            f"PRAGMA busy_timeout = {query_timeout * 1000}"
+        )  # Set busy wait timeout to query_timeout seconds
         need_to_close = True
 
     conn.execute("PRAGMA journal_mode = WAL")
     conn.execute("PRAGMA synchronous = OFF")
-    
+
     cursor = conn.cursor()
 
     try:
-        
-        start_time = time.time()
         cursor.execute(query)
-        
-        if lower_q.startswith(('select', 'with')):
+
+        if lower_q.startswith(("select", "with")):
             result = cursor.fetchall()
             if result and len(result) > MAX_ROWS:
                 result = result[:MAX_ROWS]
@@ -54,7 +45,6 @@ def perform_query_on_sqlite_databases(query, db_path, conn=None, query_timeout=3
             except Exception:
                 result = None
 
-        
         return (result, conn)
 
     except sqlite3.OperationalError as e:
@@ -71,9 +61,7 @@ def perform_query_on_sqlite_databases(query, db_path, conn=None, query_timeout=3
             pass
 
 
-def execute_queries(
-    queries, db_path, conn, logger=None, section_title="", return_error=False
-):
+def execute_queries(queries, db_path, conn, logger=None, section_title="", return_error=False):
     """
     Execute query list using same connection, skip complex queries directly
     """
@@ -92,14 +80,18 @@ def execute_queries(
     for i, query in enumerate(queries):
         try:
             logger.info(f"Executing query {i+1}/{len(queries)}: {query[:100]}... on {db_path}")
-            
+
             query_result, conn = perform_query_on_sqlite_databases(
                 query, db_path, conn=conn, query_timeout=30
             )
 
         except sqlite3.OperationalError as e:
             error_str = str(e).lower()
-            if "database is locked" in error_str or "timeout" in error_str or "complex query skipped" in error_str:
+            if (
+                "database is locked" in error_str
+                or "timeout" in error_str
+                or "complex query skipped" in error_str
+            ):
                 logger.error(f"Timeout/Skip error executing query {i+1}: {e}")
                 error_message += f"Timeout/Skip error executing query {i+1}: {e}\n"
                 timeout_error = True
@@ -132,7 +124,6 @@ def execute_queries(
         return query_result, execution_error, timeout_error, error_message
     else:
         return query_result, execution_error, timeout_error
-
 
 
 def close_sqlite_connection(db_path, conn):
@@ -170,9 +161,7 @@ def reset_and_restore_database(db_path, pg_password, logger):
     elif "_process_" in base_db_name:
         base_db_name = base_db_name.split("_process_")[0]
 
-    template_db_path = os.path.join(
-        os.path.dirname(db_path), f"{base_db_name}_template.sqlite"
-    )
+    template_db_path = os.path.join(os.path.dirname(db_path), f"{base_db_name}_template.sqlite")
 
     logger.info(f"Resetting database {db_path} using template {template_db_path}")
     logger.info(f"Base DB name extracted: {base_db_name}")
@@ -195,19 +184,13 @@ def reset_and_restore_database(db_path, pg_password, logger):
                 logger.info(f"Using found template file: {template_db_path}")
             else:
                 # If no template file, look for main database file
-                main_db_files = [
-                    f for f in files_in_dir if f == f"{base_db_name}.sqlite"
-                ]
+                main_db_files = [f for f in files_in_dir if f == f"{base_db_name}.sqlite"]
                 if main_db_files:
                     main_db_path = os.path.join(db_dir, main_db_files[0])
-                    logger.info(
-                        f"No template found, using main database: {main_db_path}"
-                    )
+                    logger.info(f"No template found, using main database: {main_db_path}")
                     template_db_path = main_db_path
                 else:
-                    raise FileNotFoundError(
-                        f"No suitable database file found in {db_dir}"
-                    )
+                    raise FileNotFoundError(f"No suitable database file found in {db_dir}")
         except Exception as e:
             logger.error(f"Error listing directory {db_dir}: {e}")
             raise
@@ -219,9 +202,7 @@ def reset_and_restore_database(db_path, pg_password, logger):
 
     # 2) Copy from template
     shutil.copy2(template_db_path, db_path)
-    logger.info(
-        f"Database {db_path} created from template {template_db_path} successfully."
-    )
+    logger.info(f"Database {db_path} created from template {template_db_path} successfully.")
 
 
 def create_ephemeral_db_copies(db_path, base_db_names, num_copies, pg_password, logger):
@@ -258,9 +239,7 @@ def create_ephemeral_db_copies(db_path, base_db_names, num_copies, pg_password, 
                     main_db_candidates = [f for f in files if f == f"{base_db}.sqlite"]
                     if main_db_candidates:
                         base_template_path = os.path.join(db_dir, main_db_candidates[0])
-                        logger.info(
-                            f"Using main database as template: {base_template_path}"
-                        )
+                        logger.info(f"Using main database as template: {base_template_path}")
                     else:
                         logger.error(f"No suitable database file found for {base_db}")
                         continue
@@ -278,9 +257,7 @@ def create_ephemeral_db_copies(db_path, base_db_names, num_copies, pg_password, 
                 os.remove(ephemeral_name)
 
             # Copy from template
-            logger.info(
-                f"Creating ephemeral db {ephemeral_name} from {base_template_path}..."
-            )
+            logger.info(f"Creating ephemeral db {ephemeral_name} from {base_template_path}...")
             try:
                 shutil.copy2(base_template_path, ephemeral_name)
                 ephemeral_db_pool[base_db].append(ephemeral_name)
@@ -288,9 +265,7 @@ def create_ephemeral_db_copies(db_path, base_db_names, num_copies, pg_password, 
             except Exception as e:
                 logger.error(f"Failed to create ephemeral db {ephemeral_name}: {e}")
 
-        logger.info(
-            f"For base_db={base_db}, ephemeral db list = {ephemeral_db_pool[base_db]}"
-        )
+        logger.info(f"For base_db={base_db}, ephemeral db list = {ephemeral_db_pool[base_db]}")
 
     return ephemeral_db_pool
 
@@ -307,6 +282,4 @@ def drop_ephemeral_dbs(ephemeral_db_pool_dict, pg_password, logger):
                 try:
                     os.remove(ephemeral_db_path)
                 except Exception as e:
-                    logger.error(
-                        f"Failed to drop ephemeral db {ephemeral_db_path}: {e}"
-                    )
+                    logger.error(f"Failed to drop ephemeral db {ephemeral_db_path}: {e}")
