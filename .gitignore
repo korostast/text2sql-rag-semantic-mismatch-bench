@@ -175,4 +175,4 @@ cython_debug/
 mini_dev/evaluation/eval_result/
 mini_dev/llm/exp_result/turbo_output_kg/
 data/
-artifacts/
+plans/
