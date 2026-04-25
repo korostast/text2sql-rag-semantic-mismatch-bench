@@ -5,7 +5,7 @@ meta_time_out=30.0
 # DO NOT CHANGE THIS
 
 # ************************* #
-predicted_sql_path='../llm/exp_result/turbo_output_kg/gpt-oss-120b_SQLite.json' # Replace with your predict sql json path
+predicted_sql_path='../llm/exp_result/turbo_output_kg/predict_mini_dev_openai/gpt-oss-120b_SQLite.json' # Replace with your predict sql json path
 # predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_PostgreSQL.json' # Replace with your predict sql json path
 # predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_MySQL.json' # Replace with your predict sql json path
 

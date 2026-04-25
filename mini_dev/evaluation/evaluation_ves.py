@@ -16,12 +16,7 @@ import time
 import math
 
 
-c = 0
-
 def result_callback(result):
-    global c
-    c += 1
-    print(c)
     exec_result.append(result)
 
 

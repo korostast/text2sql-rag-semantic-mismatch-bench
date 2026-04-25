@@ -92,10 +92,7 @@ def compute_acc_by_diff(exec_results, diff_json_path):
             moderate_results.append(exec_results[i])
 
         if content["difficulty"] == "challenging":
-            try:
-                challenging_results.append(exec_results[i])
-            except:
-                print(i)
+            challenging_results.append(exec_results[i])
 
     simple_acc = sum([res["res"] for res in simple_results]) / len(simple_results)
     moderate_acc = sum([res["res"] for res in moderate_results]) / len(moderate_results)

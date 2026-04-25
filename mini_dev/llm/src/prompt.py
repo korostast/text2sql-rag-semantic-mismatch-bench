@@ -1,4 +1,5 @@
 from table_schema import generate_schema_prompt
+from typing import List, Dict, Optional
 
 
 def generate_comment_prompt(question, sql_dialect, knowledge=None):
@@ -28,13 +29,50 @@ def generate_instruction_prompt(sql_dialect):
         """
 
 
-def generate_combined_prompts_one(db_path, question, sql_dialect, knowledge=None):
+def generate_few_shot_examples(few_shot_examples: List[Dict]) -> str:
+    """
+    Generate few-shot examples section for the prompt
+    """
+    if not few_shot_examples:
+        return ""
+    
+    examples_text = "-- Here are some similar examples to help you understand the task:\n\n"
+    
+    for i, example in enumerate(few_shot_examples, 1):
+        examples_text += f"-- Example {i}:\n"
+        examples_text += f"-- Question: {example.get('question', '')}\n"
+        
+        evidence = example.get('evidence', '')
+        if evidence:
+            examples_text += f"-- Evidence: {evidence}\n"
+        
+        examples_text += f"-- SQL: {example.get('sql', '')}\n\n"
+    
+    return examples_text
+
+
+def generate_combined_prompts_one(
+    db_path: str,
+    question: str,
+    sql_dialect: str,
+    knowledge: Optional[str] = None,
+    few_shot_examples: Optional[List[Dict]] = None
+) -> str:
+    """
+    Generate combined prompt with optional few-shot examples
+    """
     schema_prompt = generate_schema_prompt(sql_dialect, db_path)
+    few_shot_prompt = generate_few_shot_examples(few_shot_examples)
     comment_prompt = generate_comment_prompt(question, sql_dialect, knowledge)
     cot_prompt = generate_cot_prompt(sql_dialect)
     instruction_prompt = generate_instruction_prompt(sql_dialect)
 
-    combined_prompts = "\n\n".join(
-        [schema_prompt, comment_prompt, cot_prompt, instruction_prompt]
-    )
+    if few_shot_prompt:
+        combined_prompts = "\n\n".join(
+            [schema_prompt, few_shot_prompt, comment_prompt, cot_prompt, instruction_prompt]
+        )
+    else:
+        combined_prompts = "\n\n".join(
+            [schema_prompt, comment_prompt, cot_prompt, instruction_prompt]
+        )
     return combined_prompts

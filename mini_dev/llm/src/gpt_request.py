@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 import concurrent.futures
 
 from prompt import generate_combined_prompts_one
+from opensearch_search import search_similar_examples
 
 
 def new_directory(path):
@@ -117,31 +118,55 @@ def collect_response_from_gpt(
     question_list,
     api_key,
     engine,
+    api_base,
     sql_dialect,
     num_threads=3,
     knowledge_list=None,
+    dynamic_examples_few_shot=False,
+    opensearch_url="http://localhost:9200",
+    embedder_url="https://api.openai.com/v1",
+    embedder_model="bge-m3",
+    embedder_api_key="",
 ):
     """
     Collect responses from GPT using multiple threads.
     """
     client = init_client(api_key, api_base, engine)
 
-    tasks = [
-        (
-            generate_combined_prompts_one(
-                db_path=db_path_list[i],
-                question=question_list[i],
-                sql_dialect=sql_dialect,
-                knowledge=knowledge_list[i],
-            ),
-            engine,
-            client,
-            db_path_list[i],
-            question_list[i],
-            i,
+    tasks = []
+    for i in tqdm(range(len(question_list)), desc="Constructing prompt for all the questions"):
+        few_shot_examples = None
+        if dynamic_examples_few_shot:
+            try:
+                few_shot_examples = search_similar_examples(
+                    question=question_list[i],
+                    k=5,
+                    opensearch_url=opensearch_url,
+                    embedder_url=embedder_url,
+                    embedder_model=embedder_model,
+                    embedder_api_key=embedder_api_key
+                )
+            except Exception as e:
+                print(f"Error searching for similar examples for question {i}: {e}")
+                few_shot_examples = None
+        
+        tasks.append(
+            (
+                generate_combined_prompts_one(
+                    db_path=db_path_list[i],
+                    question=question_list[i],
+                    sql_dialect=sql_dialect,
+                    knowledge=knowledge_list[i] if knowledge_list else None,
+                    few_shot_examples=few_shot_examples,
+                ),
+                engine,
+                client,
+                db_path_list[i],
+                question_list[i],
+                i,
+            )
         )
-        for i in range(len(question_list))
-    ]
+    
     responses = []
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
         future_to_task = {
@@ -170,6 +195,11 @@ if __name__ == "__main__":
     args_parser.add_argument("--chain_of_thought", type=str)
     args_parser.add_argument("--num_processes", type=int, default=3)
     args_parser.add_argument("--sql_dialect", type=str, default="SQLite")
+    args_parser.add_argument("--dynamic_examples_few_shot", type=str, default="False")
+    args_parser.add_argument("--opensearch_url", type=str, default="http://localhost:9200")
+    args_parser.add_argument("--embedder_url", type=str, default="https://api.openai.com/v1")
+    args_parser.add_argument("--embedder_model", type=str, default="bge-m3")
+    args_parser.add_argument("--embedder_api_key", type=str, default="")
     args = args_parser.parse_args()
 
     eval_data = json.load(open(args.eval_path, "r"))
@@ -185,9 +215,15 @@ if __name__ == "__main__":
             question_list,
             args.api_key,
             args.engine,
+            args.base_url,
             args.sql_dialect,
             args.num_processes,
             knowledge_list,
+            args.dynamic_examples_few_shot == "True",
+            args.opensearch_url,
+            args.embedder_url,
+            args.embedder_model,
+            args.embedder_api_key,
         )
     else:
         responses = collect_response_from_gpt(
@@ -195,8 +231,15 @@ if __name__ == "__main__":
             question_list,
             args.api_key,
             args.engine,
+            args.base_url,
             args.sql_dialect,
             args.num_processes,
+            None,
+            args.dynamic_examples_few_shot == "True",
+            args.opensearch_url,
+            args.embedder_url,
+            args.embedder_model,
+            args.embedder_api_key,
         )
 
     if args.chain_of_thought == "True":
@@ -225,11 +268,12 @@ if __name__ == "__main__":
     generate_sql_file(sql_lst=responses, output_path=output_name)
 
     print(
-        "successfully collect results from {} for {} evaluation; SQL dialect {} Use knowledge: {}; Use COT: {}".format(
+        "successfully collect results from {} for {} evaluation; SQL dialect {} Use knowledge: {}; Use COT: {}; Use dynamic few-shot: {}".format(
             args.engine,
             args.mode,
             args.sql_dialect,
             args.use_knowledge,
             args.chain_of_thought,
+            args.dynamic_examples_few_shot,
         )
     )

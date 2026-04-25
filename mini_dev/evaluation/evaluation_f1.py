@@ -172,10 +172,7 @@ def compute_f1_by_diff(exec_results, diff_json_path):
             moderate_results.append(exec_results[i])
 
         if content["difficulty"] == "challenging":
-            try:
-                challenging_results.append(exec_results[i])
-            except:
-                print(i)
+            challenging_results.append(exec_results[i])
 
     simple_f1 = sum([res["res"] for res in simple_results]) / len(simple_results) * 100
     moderate_f1 = (
