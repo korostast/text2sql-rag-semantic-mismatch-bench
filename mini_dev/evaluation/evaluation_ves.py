@@ -15,10 +15,12 @@ from evaluation_utils import (
     sort_results,
 )
 from func_timeout import FunctionTimedOut, func_timeout
+from tqdm import tqdm
 
 
-def result_callback(result):
+def result_callback(result, pbar):
     exec_result.append(result)
+    pbar.update(1)
 
 
 def clean_abnormal(input):
@@ -49,31 +51,70 @@ def execute_sql(sql, db_path, sql_dialect, return_time=False):
 
 def iterated_execute_sql(predicted_sql, ground_truth, db_path, iterate_num, sql_dialect):
     diff_list = []
+    predicted_time_first = execute_sql(predicted_sql, db_path, sql_dialect, return_time=True)
+    ground_truth_time_first = execute_sql(ground_truth, db_path, sql_dialect, return_time=True)
+
+    max_time = max(predicted_time_first, ground_truth_time_first)
+    if max_time >= 10:
+        dynamic_iterate_num = 0
+    elif max_time >= 5:
+        dynamic_iterate_num = 40
+    elif max_time >= 3:
+        dynamic_iterate_num = 50
+    else:
+        dynamic_iterate_num = iterate_num
+
+    # Execute queries to get results for comparison
     predicted_res = execute_sql(predicted_sql, db_path, sql_dialect)
     ground_truth_res = execute_sql(ground_truth, db_path, sql_dialect)
     reward = 0
     time_ratio = 0
-    if set(predicted_res) == set(ground_truth_res):
-        for _ in range(iterate_num):
-            predicted_time = execute_sql(predicted_sql, db_path, sql_dialect, return_time=True)
-            ground_truth_time = execute_sql(ground_truth, db_path, sql_dialect, return_time=True)
-            diff_list.append(ground_truth_time / predicted_time)
-        processed_diff_list = clean_abnormal(diff_list)
-        time_ratio = sum(processed_diff_list) / len(processed_diff_list)
-    if time_ratio == 0:
-        reward = 0
-    elif time_ratio >= 2:
-        reward = 1.25
-    elif time_ratio >= 1 and time_ratio < 2:
-        reward = 1
-    elif time_ratio >= 0.5 and time_ratio < 1:
-        reward = 0.75
-    elif time_ratio >= 0.25 and time_ratio < 0.5:
-        reward = 0.5
-    else:
-        reward = 0.25
-    # return time_ratio
-    return reward
+
+    # Pre-stop
+    pre_time_ratio = ground_truth_time_first / predicted_time_first
+    pre_stop = False
+    if max_time >= 10:
+        if pre_time_ratio > 100:
+            reward = 1.25
+            print(
+                f"   Pre-stop: ground truth SQL-query is SLOWER than predicted SQL-query by {pre_time_ratio:.1f} times ({ground_truth_time_first:.2f}s vs. {predicted_time_first:.2f}s).\n"
+                f"   Ground truth SQL: {ground_truth}\n"
+                f"   Predicted SQL: {predicted_sql}"
+            )
+            pre_stop = True
+        elif pre_time_ratio < 0.01:
+            reward = 0
+            print(
+                f"   Pre-stop: ground truth SQL-query is FASTER than predicted SQL-query by {(1. / pre_time_ratio):.1f} times ({ground_truth_time_first:.2f}s vs. {predicted_time_first:.2f}s).\n"
+                f"   Ground truth SQL: {ground_truth}\n"
+                f"   Predicted SQL: {predicted_sql}"
+            )
+            pre_stop = True
+
+    if not pre_stop:
+        if set(predicted_res) == set(ground_truth_res):
+            for _ in range(dynamic_iterate_num):
+                predicted_time = execute_sql(predicted_sql, db_path, sql_dialect, return_time=True)
+                ground_truth_time = execute_sql(
+                    ground_truth, db_path, sql_dialect, return_time=True
+                )
+                diff_list.append(ground_truth_time / predicted_time)
+            processed_diff_list = clean_abnormal(diff_list)
+            time_ratio = sum(processed_diff_list) / len(processed_diff_list)
+        if time_ratio == 0:
+            reward = 0
+        elif time_ratio >= 2:
+            reward = 1.25
+        elif time_ratio >= 1 and time_ratio < 2:
+            reward = 1
+        elif time_ratio >= 0.5 and time_ratio < 1:
+            reward = 0.75
+        elif time_ratio >= 0.25 and time_ratio < 0.5:
+            reward = 0.5
+        else:
+            reward = 0.25
+
+    return reward, dynamic_iterate_num
 
 
 def execute_model(
@@ -83,7 +124,8 @@ def execute_model(
         # you can personalize the total timeout number
         # larger timeout leads to more stable ves
         # while it needs more your patience....
-        reward = func_timeout(
+        # Use a conservative timeout based on the maximum possible iterations
+        reward, _ = func_timeout(
             meta_time_out * iterate_num,
             iterated_execute_sql,
             args=(predicted_sql, ground_truth, db_place, iterate_num, sql_dialect),
@@ -109,6 +151,11 @@ def run_sqls_parallel(
     sql_dialect="SQLite",
 ):
     pool = mp.Pool(processes=num_cpus)
+
+    pbar = tqdm(
+        total=len(sqls), desc=f"Executing VES evaluation queries ({sql_dialect})", unit="query"
+    )
+
     for i, sql_pair in enumerate(sqls):
         predicted_sql, ground_truth = sql_pair
         pool.apply_async(
@@ -122,10 +169,11 @@ def run_sqls_parallel(
                 meta_time_out,
                 sql_dialect,
             ),
-            callback=result_callback,
+            callback=lambda result: result_callback(result, pbar),
         )
     pool.close()
     pool.join()
+    pbar.close()
 
 
 def compute_ves(exec_results):

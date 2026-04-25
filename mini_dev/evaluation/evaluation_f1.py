@@ -10,6 +10,7 @@ from evaluation_utils import (
     sort_results,
 )
 from func_timeout import FunctionTimedOut, func_timeout
+from tqdm import tqdm
 
 
 def calculate_row_match(predicted_row, ground_truth_row):
@@ -98,8 +99,9 @@ def calculate_f1_score(predicted, ground_truth):
     return f1_score
 
 
-def result_callback(result):
+def result_callback(result, pbar):
     exec_result.append(result)
+    pbar.update(1)
 
 
 def execute_model(predicted_sql, ground_truth, db_place, idx, meta_time_out, sql_dialect):
@@ -132,6 +134,12 @@ def execute_model(predicted_sql, ground_truth, db_place, idx, meta_time_out, sql
 
 def run_sqls_parallel(sqls, db_places, num_cpus=1, meta_time_out=30.0, sql_dialect="SQLite"):
     pool = mp.Pool(processes=num_cpus)
+
+    #
+    pbar = tqdm(
+        total=len(sqls), desc=f"Executing F1 evaluation queries ({sql_dialect})", unit="query"
+    )
+
     for i, sql_pair in enumerate(sqls):
 
         predicted_sql, ground_truth = sql_pair
@@ -145,10 +153,11 @@ def run_sqls_parallel(sqls, db_places, num_cpus=1, meta_time_out=30.0, sql_diale
                 meta_time_out,
                 sql_dialect,
             ),
-            callback=result_callback,
+            callback=lambda result: result_callback(result, pbar),
         )
     pool.close()
     pool.join()
+    pbar.close()
 
 
 def compute_f1_by_diff(exec_results, diff_json_path):

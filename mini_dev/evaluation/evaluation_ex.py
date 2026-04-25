@@ -12,10 +12,12 @@ from evaluation_utils import (
     sort_results,
 )
 from func_timeout import FunctionTimedOut, func_timeout
+from tqdm import tqdm
 
 
-def result_callback(result):
+def result_callback(result, pbar):
     exec_result.append(result)
+    pbar.update(1)
 
 
 def calculate_ex(predicted_res, ground_truth_res):
@@ -56,6 +58,11 @@ def execute_model(predicted_sql, ground_truth, db_place, idx, meta_time_out, sql
 
 def run_sqls_parallel(sqls, db_places, num_cpus=1, meta_time_out=30.0, sql_dialect="SQLite"):
     pool = mp.Pool(processes=num_cpus)
+
+    pbar = tqdm(
+        total=len(sqls), desc=f"Executing EX evaluation queries ({sql_dialect})", unit="query"
+    )
+
     for i, sql_pair in enumerate(sqls):
 
         predicted_sql, ground_truth = sql_pair
@@ -69,10 +76,11 @@ def run_sqls_parallel(sqls, db_places, num_cpus=1, meta_time_out=30.0, sql_diale
                 meta_time_out,
                 sql_dialect,
             ),
-            callback=result_callback,
+            callback=lambda result: result_callback(result, pbar),
         )
     pool.close()
     pool.join()
+    pbar.close()
 
 
 def compute_acc_by_diff(exec_results, diff_json_path):
