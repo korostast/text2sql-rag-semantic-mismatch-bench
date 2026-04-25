@@ -108,7 +108,6 @@ def worker_function(question_data):
     prompt, llm_model, client, db_path, question, i = question_data
     response = connect_gpt(llm_model, prompt, 4096, 0, [], client)
     sql = post_process_response(response, db_path)
-    print(f"Processed {i}th question: {question}")
     return sql, i
 
 

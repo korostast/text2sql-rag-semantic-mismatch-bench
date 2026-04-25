@@ -40,8 +40,8 @@ if [ "$dynamic_examples_few_shot" = "True" ]; then
 fi
 
 echo "generate $llm_model batch, run in $num_threads threads, with knowledge: $use_knowledge, with chain of thought: $cot, with dynamic few-shot: $dynamic_examples_few_shot"
-python3 -u ./src/gpt_request.py --db_root_path ${db_root_path} --api_key ${llm_api_key} --mode ${mode} \
---engine ${llm_model} --eval_path ${eval_path} --data_output_path ${data_kg_output_path} --use_knowledge ${use_knowledge} \
---chain_of_thought ${cot} --num_process ${num_threads} --sql_dialect ${sql_dialect} --base_url ${llm_url} \
+python3 -u ./src/gpt_request.py --db_root_path ${db_root_path} --llm_api_key ${llm_api_key} --mode ${mode} \
+--llm_model ${llm_model} --eval_path ${eval_path} --data_output_path ${data_kg_output_path} --use_knowledge ${use_knowledge} \
+--chain_of_thought ${cot} --num_process ${num_threads} --sql_dialect ${sql_dialect} --llm_url ${llm_url} \
 --dynamic_examples_few_shot ${dynamic_examples_few_shot} --opensearch_url ${opensearch_url} \
 --embedder_url ${embedder_url} --embedder_model ${embedder_model} --embedder_api_key ${embedder_api_key}

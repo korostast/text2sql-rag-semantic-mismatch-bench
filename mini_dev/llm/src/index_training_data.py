@@ -99,7 +99,7 @@ class TrainingDataIndexer:
         """
         Index training data with embeddings
         """
-        print(f"Indexing {len(data)} examples with embeddings...")
+        print(f"Indexing {len(data)} samples...")
 
         for i in tqdm(range(0, len(data), batch_size), desc="Indexing"):
             batch = data[i : i + batch_size]
