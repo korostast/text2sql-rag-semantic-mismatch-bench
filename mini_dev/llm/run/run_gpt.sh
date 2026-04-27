@@ -27,6 +27,15 @@ opensearch_url='http://localhost:9200'
 embedder_url='https://integrate.api.nvidia.com/v1'
 embedder_model='bge-m3'
 embedder_api_key='<apikey>'
+embedder_k_results=100
+
+# Reranking configuration
+rerank_dynamic_few_shots='True'
+reranker_url='<url>'
+reranker_model='bge-reranker'
+reranker_api_key='<apikey>'
+reranker_k_results=5
+reranker_score_threshold=0.001
 
 # Index training data if dynamic examples are enabled
 if [ "$dynamic_examples_few_shot" = "True" ]; then
@@ -39,9 +48,13 @@ if [ "$dynamic_examples_few_shot" = "True" ]; then
         --embedder_api_key ${embedder_api_key}
 fi
 
-echo "generate $llm_model batch, run in $num_threads threads, with knowledge: $use_knowledge, with chain of thought: $cot, with dynamic few-shot: $dynamic_examples_few_shot"
+echo "generate $llm_model batch, run in $num_threads threads, with knowledge: $use_knowledge, with chain of thought: $cot, with dynamic few-shot: $dynamic_examples_few_shot, with reranking: $rerank_dynamic_few_shots"
 python3 -u ./src/gpt_request.py --db_root_path ${db_root_path} --llm_api_key ${llm_api_key} --mode ${mode} \
 --llm_model ${llm_model} --eval_path ${eval_path} --data_output_path ${data_kg_output_path} --use_knowledge ${use_knowledge} \
 --chain_of_thought ${cot} --num_process ${num_threads} --sql_dialect ${sql_dialect} --llm_url ${llm_url} \
 --dynamic_examples_few_shot ${dynamic_examples_few_shot} --opensearch_url ${opensearch_url} \
---embedder_url ${embedder_url} --embedder_model ${embedder_model} --embedder_api_key ${embedder_api_key}
+--embedder_url ${embedder_url} --embedder_model ${embedder_model} --embedder_api_key ${embedder_api_key} \
+--embedder_k_results ${embedder_k_results} \
+--rerank_dynamic_few_shots ${rerank_dynamic_few_shots} --reranker_url ${reranker_url} \
+--reranker_model ${reranker_model} --reranker_api_key ${reranker_api_key} \
+--reranker_k_results ${reranker_k_results} --reranker_score_threshold ${reranker_score_threshold}

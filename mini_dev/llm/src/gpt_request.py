@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from openai import OpenAI
 from opensearch_search import search_similar_examples
 from prompt import generate_combined_prompts_one
+from reranker import rerank_search_results
 from tqdm import tqdm
 
 
@@ -125,6 +126,13 @@ def collect_response_from_gpt(
     embedder_url="https://api.openai.com/v1",
     embedder_model="bge-m3",
     embedder_api_key="",
+    embedder_k_results=5,
+    rerank_dynamic_few_shots=False,
+    reranker_url="https://api.openai.com/v1",
+    reranker_model="bge-reranker-v2",
+    reranker_api_key="",
+    reranker_k_results=5,
+    reranker_score_threshold=0.5,
 ):
     """
     Collect responses from GPT using multiple threads.
@@ -136,14 +144,40 @@ def collect_response_from_gpt(
         few_shot_examples = None
         if dynamic_examples_few_shot:
             try:
-                few_shot_examples = search_similar_examples(
+                # Retrieve initial results using embedder
+                initial_results = search_similar_examples(
                     question=question_list[i],
-                    k=5,
+                    k=embedder_k_results,
                     opensearch_url=opensearch_url,
                     embedder_url=embedder_url,
                     embedder_model=embedder_model,
                     embedder_api_key=embedder_api_key,
                 )
+
+                # Rerank if enabled
+                if rerank_dynamic_few_shots and initial_results:
+                    try:
+                        few_shot_examples = rerank_search_results(
+                            query=question_list[i],
+                            search_results=initial_results,
+                            k_ret=reranker_k_results,
+                            score_threshold=reranker_score_threshold,
+                            reranker_url=reranker_url,
+                            reranker_model=reranker_model,
+                            reranker_api_key=reranker_api_key,
+                        )
+                        if not few_shot_examples:
+                            few_shot_examples = None
+                    except Exception as e:
+                        print(f"Error reranking for question {i}: {e}")
+                        few_shot_examples = (
+                            initial_results[:reranker_k_results] if initial_results else None
+                        )
+                else:
+                    # Use top results from initial search
+                    few_shot_examples = (
+                        initial_results[:reranker_k_results] if initial_results else None
+                    )
             except Exception as e:
                 print(f"Error searching for similar examples for question {i}: {e}")
                 few_shot_examples = None
@@ -192,6 +226,13 @@ if __name__ == "__main__":
     args_parser.add_argument("--embedder_url", type=str, default="https://api.openai.com/v1")
     args_parser.add_argument("--embedder_model", type=str, default="bge-m3")
     args_parser.add_argument("--embedder_api_key", type=str, default="")
+    args_parser.add_argument("--embedder_k_results", type=int, default=5)
+    args_parser.add_argument("--rerank_dynamic_few_shots", type=str, default="False")
+    args_parser.add_argument("--reranker_url", type=str, default="https://api.openai.com/v1")
+    args_parser.add_argument("--reranker_model", type=str, default="bge-reranker-v2")
+    args_parser.add_argument("--reranker_api_key", type=str, default="")
+    args_parser.add_argument("--reranker_k_results", type=int, default=5)
+    args_parser.add_argument("--reranker_score_threshold", type=float, default=0.5)
     args = args_parser.parse_args()
 
     eval_data = json.load(open(args.eval_path))
@@ -216,6 +257,13 @@ if __name__ == "__main__":
             args.embedder_url,
             args.embedder_model,
             args.embedder_api_key,
+            args.embedder_k_results,
+            args.rerank_dynamic_few_shots == "True",
+            args.reranker_url,
+            args.reranker_model,
+            args.reranker_api_key,
+            args.reranker_k_results,
+            args.reranker_score_threshold,
         )
     else:
         responses = collect_response_from_gpt(
@@ -232,6 +280,13 @@ if __name__ == "__main__":
             args.embedder_url,
             args.embedder_model,
             args.embedder_api_key,
+            args.embedder_k_results,
+            args.rerank_dynamic_few_shots == "True",
+            args.reranker_url,
+            args.reranker_model,
+            args.reranker_api_key,
+            args.reranker_k_results,
+            args.reranker_score_threshold,
         )
 
     if args.chain_of_thought == "True":
@@ -260,12 +315,13 @@ if __name__ == "__main__":
     generate_sql_file(sql_lst=responses, output_path=output_name)
 
     print(
-        "successfully collect results from {} for {} evaluation; SQL dialect {} Use knowledge: {}; Use COT: {}; Use dynamic few-shot: {}".format(
+        "successfully collect results from {} for {} evaluation; SQL dialect {} Use knowledge: {}; Use COT: {}; Use dynamic few-shot: {}; Use reranking: {}".format(
             args.llm_model,
             args.mode,
             args.sql_dialect,
             args.use_knowledge,
             args.chain_of_thought,
             args.dynamic_examples_few_shot,
+            args.rerank_dynamic_few_shots,
         )
     )

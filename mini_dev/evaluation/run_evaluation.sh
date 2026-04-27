@@ -6,7 +6,7 @@ meta_time_out=30.0
 # DO NOT CHANGE THIS
 
 # ************************* #
-predicted_sql_path='../llm/exp_result/turbo_output_kg/gpt-oss-120b_SQLite.json' # Replace with your predict sql json path
+predicted_sql_path='../llm/exp_result/turbo_output_kg/predict_mini_dev_openai/gpt-oss-120b_SQLite.json' # Replace with your predict sql json path
 # predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_PostgreSQL.json' # Replace with your predict sql json path
 # predicted_sql_path='../sql_result/predict_mini_dev_gpt-4-32k_cot_MySQL.json' # Replace with your predict sql json path
 
@@ -48,10 +48,10 @@ echo "Ground Truth Path: $ground_truth_path"
 
 
 
-# echo "starting to compare with knowledge for ex, sql_dialect: ${sql_dialect}"
-# python3 -u ./evaluation_ex.py --db_root_path ${db_root_path} --predicted_sql_path "${predicted_sql_path}"  \
-# --ground_truth_path ${ground_truth_path} --num_cpus ${num_cpus} --output_log_path "${output_log_path}" \
-# --diff_json_path ${diff_json_path} --meta_time_out ${meta_time_out}  --sql_dialect "${sql_dialect}"
+echo "starting to compare with knowledge for ex, sql_dialect: ${sql_dialect}"
+python3 -u ./evaluation_ex.py --db_root_path ${db_root_path} --predicted_sql_path "${predicted_sql_path}"  \
+--ground_truth_path ${ground_truth_path} --num_cpus ${num_cpus} --output_log_path "${output_log_path}" \
+--diff_json_path ${diff_json_path} --meta_time_out ${meta_time_out}  --sql_dialect "${sql_dialect}"
 
 
 
