@@ -151,6 +151,7 @@ def worker_function(question_data):
                 embedder_api_key=embedder_api_key,
                 value_search_k_results=value_search_k_results,
             )
+            final_sql = post_process_response(final_sql, db_path)
             return final_sql, i
         except Exception as e:
             print(f"Error in value verification for question {i}: {e}")
@@ -178,20 +179,21 @@ def correct_sql(
     Verify and correct SQL using dynamic value few-shots with structured output
     """
     db_id = db_path.split("/")[-1].split(".sqlite")[0]
+    initial_sql_cleaned, _ = initial_sql.split("\t----- bird -----\t")
 
     try:
         column_value_pairs = extract_column_value_pairs(
-            sql=initial_sql,
+            sql=initial_sql_cleaned,
             db_schema=db_schema,
             llm_client=llm_client,
             llm_model=llm_model,
         )
     except Exception as e:
         print(f"Error extracting column-value pairs: {e}")
-        return initial_sql
+        return initial_sql_cleaned
 
     if not column_value_pairs:
-        return initial_sql
+        return initial_sql_cleaned
 
     for pair in column_value_pairs:
         pair["db_id"] = db_id
@@ -208,14 +210,14 @@ def correct_sql(
         )
     except Exception as e:
         print(f"Error searching for similar values: {e}")
-        return initial_sql
+        return initial_sql_cleaned
 
     if not similar_values or not any(values for values in similar_values.values()):
-        return initial_sql
+        return initial_sql_cleaned
 
     schema_prompt = generate_schema_prompt(sql_dialect, db_path)
     verification_prompt = generate_value_verification_prompt(
-        original_sql=initial_sql,
+        original_sql=initial_sql_cleaned,
         question=question,
         schema_prompt=schema_prompt,
         similar_values=similar_values,
@@ -228,7 +230,7 @@ def correct_sql(
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are a SQL verification expert. Review SQL queries and determine if they need correction based on similar database values. Check values in ALL filtration clauses (WHERE, HAVING, JOIN ON, CASE WHEN, IIF/IF, NULLIF, COALESCE, subqueries). Always return valid JSON.",
+                        "content": "You are a SQL verification expert. Review SQL queries and determine if they need correction based on similar database values. Check values in all filtration clauses (WHERE, HAVING, JOIN ON, CASE WHEN, IIF/IF, NULLIF, COALESCE, subqueries). Always return valid JSON.",
                     },
                     {"role": "user", "content": verification_prompt},
                 ],
@@ -242,7 +244,7 @@ def correct_sql(
                             "properties": {
                                 "should_be_corrected": {
                                     "type": "boolean",
-                                    "description": "True if the SQL needs correction, False if it's already correct",
+                                    "description": "true if the SQL needs correction, false if it's already correct",
                                 },
                                 "corrected_sql": {
                                     "type": "string",
@@ -265,19 +267,19 @@ def correct_sql(
             corrected_sql = parsed.get("corrected_sql", "")
 
             if should_be_corrected and corrected_sql:
-                print(f"SQL corrected for question: {question[:50]}...")
-                print(f"- Was: {initial_sql}")
+                print(f"SQL corrected for question: {question}")
+                print(f"- Was: {initial_sql_cleaned}")
                 print(f"- New: {corrected_sql}")
-                return post_process_response(corrected_sql, db_path)
+                return corrected_sql
             else:
-                print(f"SQL already correct, no correction needed for question: {question[:50]}...")
-                return post_process_response(initial_sql, db_path)
+                # print(f"SQL already correct, no correction needed for question: {question[:50]}...")
+                return initial_sql_cleaned
 
         except Exception as e:
             print(f"Attempt {attempt + 1} failed in SQL verification: {e}")
             if attempt == 2:
                 print(f"Error in SQL verification: {e}")
-                return post_process_response(initial_sql, db_path)
+                return initial_sql_cleaned
 
 
 def construct_prompt_task(

@@ -86,7 +86,7 @@ def generate_value_verification_prompt(
     similar_values_section = ""
     if similar_values:
         similar_values_section = "-- Similar Values Found in Database\n"
-        similar_values_section += "For each column-value pair in ALL filtration clauses (WHERE, HAVING, JOIN ON, CASE WHEN, IIF/IF, NULLIF, COALESCE, subqueries), here are the top 5 most similar values:\n\n"
+        similar_values_section += "For each column-value pair in all filtration clauses (WHERE, HAVING, JOIN ON, CASE WHEN, IIF/IF, NULLIF, COALESCE, subqueries), here are the few top most similar values:\n\n"
 
         for key, values in similar_values.items():
             if values:
@@ -94,8 +94,8 @@ def generate_value_verification_prompt(
                 similar_values_section += "Similar values:\n"
                 for i, val_info in enumerate(values[:5], 1):
                     val = val_info.get("value", "")
-                    score = val_info.get("score", 0.0)
-                    similar_values_section += f"  {i}. '{val}' (similarity: {score:.3f})\n"
+                    similar_values_section += f"  {i}. '{val}'\n"
+
                 similar_values_section += "\n"
 
     verification_prompt = f"""{schema_prompt}
@@ -109,7 +109,8 @@ def generate_value_verification_prompt(
 {similar_values_section}
 -- Task
 Review the initial SQL query and the similar values above.
-Determine if any values in ANY filtration clause (WHERE, HAVING, JOIN ON, CASE WHEN, IIF/IF, NULLIF, COALESCE, subqueries) need correction or removal.
+Determine if any values in any filtration clause (WHERE, HAVING, JOIN ON, CASE WHEN, IIF/IF, NULLIF, COALESCE, subqueries) need correction or removal.
+Sometimes user's question or external knowledge can have incorrect information on exact values from database. Pay attention to the format of values and the case.
 
 Return your response as a JSON object with the following structure:
 {{
@@ -121,8 +122,39 @@ Rules:
 - Set "should_be_corrected" to true only if you find values that need correction or consider some filtration clauses are not necessary
 - Set "should_be_corrected" to false if the initial SQL is already correct
 - Only fill "corrected_sql" when "should_be_corrected" is true
-- Leave "corrected_sql" as empty string or null when "should_be_corrected" is false
+- Leave "corrected_sql" as empty string when "should_be_corrected" is false
 - Return ONLY the JSON object, no additional text or comments
-- Do not change filtration operators
+- Do not change filtration operators (like =, >, <, etc.)
+
+-- Examples
+
+Example 1:
+Question: Which seasonal discount had the highest discount percentage?
+Initial SQL: SELECT Description FROM SpecialOffer WHERE Type = 'seasonal discount' ORDER BY DiscountPct DESC LIMIT 1
+Similar Values:
+Column-Value Pair: SpecialOffer.Type.seasonal discount
+Similar values:
+  1. 'Seasonal Discount'
+  2. 'Sale'
+Response:
+{{
+    "should_be_corrected": true,
+    "corrected_sql": "SELECT Description FROM SpecialOffer WHERE Type = 'Seasonal Discount' ORDER BY DiscountPct DESC LIMIT 1"
+}}
+
+Example 2:
+Question: What is the average rating for movie titled 'When Will I Be Loved'?
+Initial SQL: SELECT AVG(T2.rating_score) FROM movies AS T1 INNER JOIN ratings AS T2 ON T1.movie_id = T2.movie_id WHERE T1.movie_title = 'When Will I Be Loved'
+Similar Values:
+Column-Value Pair: movies.movie_title.When Will I Be Loved
+Similar values:
+  1. 'When Will I Be Loved'
+  2. 'A Love Come Suddenly'
+  3. 'Life Will Be Beautiful'
+Response:
+{{
+    "should_be_corrected": false,
+    "corrected_sql": ""
+}}
 """
     return verification_prompt

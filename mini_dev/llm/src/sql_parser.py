@@ -38,7 +38,7 @@ For each pair, identify:
 
 Return only the JSON object with the extracted pairs."""
 
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             response = llm_client.chat.completions.create(
                 model=llm_model,
@@ -85,7 +85,7 @@ Return only the JSON object with the extracted pairs."""
             return parsed.get("column_value_pairs", [])
         except Exception as e:
             print(f"Attempt {attempt + 1} failed to extract column-value pairs: {e}")
-            if attempt == 2:
+            if attempt == 1:
                 return []
 
 
