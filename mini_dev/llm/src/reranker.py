@@ -1,3 +1,4 @@
+
 import httpx
 
 
@@ -12,9 +13,7 @@ class RerankerClient:
         self.reranker_model = reranker_model
         self.reranker_api_key = reranker_api_key
 
-    def rerank(
-        self, query: str, documents: list[str], top_k: int = None
-    ) -> list[dict]:
+    def rerank(self, query: str, documents: list[str], top_k: int | None = None) -> list[dict]:
         """
         Rerank documents based on their relevance to the query
         """
@@ -48,6 +47,7 @@ class RerankerClient:
         except Exception as e:
             print(f"Error in reranking: {e}")
             return []
+
 
 def rerank_search_results(
     query: str,

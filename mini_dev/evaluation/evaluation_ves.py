@@ -35,18 +35,24 @@ def clean_abnormal(input):
 
 
 def execute_sql(sql, db_path, sql_dialect, return_time=False):
-    # Connect to the database
-    conn = connect_db(sql_dialect, db_path)
-    start_time = time.time()
-    cursor = conn.cursor()
-    cursor.execute(sql)
-    res = cursor.fetchall()
-    conn.close()  # Don't forget to close the connection!
-    exec_time = time.time() - start_time
-    if return_time:
-        return exec_time
+    def _execute_sql_internal():
+        conn = connect_db(sql_dialect, db_path)
+        start_time = time.time()
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        res = cursor.fetchall()
+        conn.close()
+        exec_time = time.time() - start_time
+        if return_time:
+            return exec_time
+        return res
 
-    return res
+    try:
+        return func_timeout(300, _execute_sql_internal)
+    except FunctionTimedOut:
+        if return_time:
+            return 300.0
+        return None
 
 
 def iterated_execute_sql(predicted_sql, ground_truth, db_path, iterate_num, sql_dialect):

@@ -1,6 +1,7 @@
 import argparse
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 from openai import OpenAI as OpenAIClient
 from opensearchpy import OpenSearch
@@ -86,6 +87,29 @@ class TrainingDataIndexer:
                     print(f"Failed to generate embedding after {max_retries} attempts: {e}")
                     raise
 
+    def generate_embeddings_batch(self, texts: list[str]) -> list[list[float]]:
+        """
+        Generate embeddings for a batch of texts using the embedding model
+        """
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = self.embedding_client.embeddings.create(
+                    model=self.embedder_model, input=texts
+                )
+                return [item.embedding for item in response.data]
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    wait_time = 2**attempt
+                    print(
+                        f"Error generating embeddings batch (attempt {attempt + 1}/{max_retries}): {e}"
+                    )
+                    print(f"Retrying in {wait_time} seconds...")
+                    time.sleep(wait_time)
+                else:
+                    print(f"Failed to generate embeddings batch after {max_retries} attempts: {e}")
+                    raise
+
     def load_training_data(self, train_path: str) -> list[dict]:
         """
         Load training data from JSON file
@@ -101,30 +125,57 @@ class TrainingDataIndexer:
         """
         print(f"Indexing {len(data)} samples...")
 
-        for i in tqdm(range(0, len(data), batch_size), desc="Indexing"):
-            batch = data[i : i + batch_size]
-            documents = []
-            for example in batch:
-                question = example.get("question", "")
-                if not question:
-                    continue
+        def process_batch(batch):
+            try:
+                batch_questions = []
+                valid_examples = []
+                for example in batch:
+                    question = example.get("question", "")
+                    if question:
+                        batch_questions.append(question)
+                        valid_examples.append(example)
 
-                try:
-                    embedding = self.generate_embedding(question)
+                if not batch_questions:
+                    return
+
+                embeddings = self.generate_embeddings_batch(batch_questions)
+                documents = []
+                for example, embedding in zip(valid_examples, embeddings):
                     doc = {
-                        "question": question,
+                        "question": example.get("question", ""),
                         "question_embedding": embedding,
                         "evidence": example.get("evidence", ""),
                         "sql": example.get("SQL", ""),
                         "db_id": example.get("db_id", ""),
                     }
                     documents.append(doc)
-                except Exception as e:
-                    print(f"Error processing example {example.get('question', 'unknown')}: {e}")
-                    continue
 
-            if documents:
-                self._index(documents)
+                if documents:
+                    self._index(documents)
+
+            except Exception as e:
+                print(f"Error processing batch of {len(batch)} samples: {e}")
+                for example in batch:
+                    question = example.get("question", "")
+                    if not question:
+                        continue
+                    try:
+                        embedding = self.generate_embedding(question)
+                        doc = {
+                            "question": question,
+                            "question_embedding": embedding,
+                            "evidence": example.get("evidence", ""),
+                            "sql": example.get("SQL", ""),
+                            "db_id": example.get("db_id", ""),
+                        }
+                        self._index([doc])
+                    except Exception as single_error:
+                        print(f"Error processing example {question}: {single_error}")
+                        continue
+
+        with ThreadPoolExecutor(max_workers=8) as executor:  # TODO hardcoded number
+            batches = [data[i : i + batch_size] for i in range(0, len(data), batch_size)]
+            list(tqdm(executor.map(process_batch, batches), total=len(batches), desc="Indexing"))
 
     def _index(self, documents: list[dict]):
         """

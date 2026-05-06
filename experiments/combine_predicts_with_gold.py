@@ -19,9 +19,6 @@ def main():
     args_parser.add_argument("--predicted_sql_path", type=str, required=True, default="")
     args_parser.add_argument("--output_path", type=str, default="SQLite")
     args = args_parser.parse_args()
-    import os
-
-    print(os.getcwd())
 
     with open(args.ground_truth_path, encoding="utf-8") as f:
         ground_truth = json.load(f)
