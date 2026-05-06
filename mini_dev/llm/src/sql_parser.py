@@ -76,7 +76,7 @@ Return only the JSON object with the extracted pairs."""
                 },
                 temperature=0,
                 max_tokens=8192,
-                timeout=120,
+                timeout=180,
             )
 
             result = response.choices[0].message.content

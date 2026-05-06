@@ -5,7 +5,7 @@ import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-from openai import APITimeoutError, OpenAI
+from openai import APITimeoutError, OpenAI, RateLimitError
 from opensearch_search import search_similar_examples
 from prompt import generate_combined_prompts_one, generate_value_verification_prompt
 from reranker import rerank_search_results
@@ -20,12 +20,12 @@ def new_directory(path):
         os.makedirs(path)
 
 
-def connect_gpt(engine, prompt, max_tokens, temperature, stop, client):
+def connect_model(engine, prompt, max_tokens, temperature, stop, client):
     """
-    Function to connect to the GPT API and get the response.
+    Function to connect to the model API and get the response.
     """
     MAX_API_RETRY = 10
-    for _ in range(MAX_API_RETRY):
+    for i in range(MAX_API_RETRY):
         try:
 
             if engine == "gpt-35-turbo-instruct":
@@ -34,7 +34,7 @@ def connect_gpt(engine, prompt, max_tokens, temperature, stop, client):
                     prompt=prompt,
                     max_tokens=max_tokens,
                     temperature=temperature,
-                    timeout=120,
+                    timeout=180,
                 )
                 result = result.choices[0].text
             else:  # gpt-4-turbo, gpt-4, gpt-4-32k, gpt-35-turbo
@@ -46,15 +46,20 @@ def connect_gpt(engine, prompt, max_tokens, temperature, stop, client):
                     messages=messages,
                     temperature=temperature,
                     max_tokens=max_tokens,
-                    timeout=120,
+                    timeout=180,
                 )
             break
         except APITimeoutError as e:
-            result = f"error:{e}, {type(e)}"
+            result = f"(retry {i + 1}/{MAX_API_RETRY / 2}) error:{e}, {type(e)}"
             print(result)
+            i += 1  # Cut number of retries by 2
             return result
+        except RateLimitError as e:
+            result = f"(retry {i + 1}/{MAX_API_RETRY}) error:{e}, {type(e)}"
+            print(result)
+            time.sleep(30)
         except Exception as e:
-            result = f"error:{e}, {type(e)}"
+            result = f"(retry {i + 1}/{MAX_API_RETRY}) error:{e}, {type(e)}"
             print(result)
             time.sleep(4)
 
@@ -98,12 +103,15 @@ def init_client(llm_api_key, llm_url):
     return OpenAI(
         api_key=llm_api_key,
         base_url=llm_url,
-        timeout=120,
+        timeout=180,
     )
 
 
 def post_process_response(response, db_path):
     sql = response if isinstance(response, str) else response.choices[0].message.content
+    if sql is None:
+        sql = "error:empty answer"
+
     sql = sql.replace("```sqlite", "").replace("```sql", "").replace("```", "").strip()
     db_id = db_path.split("/")[-1].split(".sqlite")[0]
     sql = f"{sql}\t----- bird -----\t{db_id}"
@@ -112,7 +120,8 @@ def post_process_response(response, db_path):
 
 def worker_function(question_data):
     """
-    Enhanced worker function with value verification
+    Function to process eash question, set up client,
+    generate the prompt, and collect the model response
     """
     (
         prompt,
@@ -131,7 +140,7 @@ def worker_function(question_data):
         sql_dialect,
         db_schema,
     ) = question_data
-    response = connect_gpt(llm_model, prompt, 8192, 0, [], client)
+    response = connect_model(llm_model, prompt, 8192, 0, [], client)
     initial_sql = post_process_response(response, db_path)
 
     if dynamic_value_few_shots and db_schema:
@@ -223,7 +232,7 @@ def correct_sql(
         similar_values=similar_values,
     )
 
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             response = llm_client.chat.completions.create(
                 model=llm_model,
@@ -256,8 +265,8 @@ def correct_sql(
                     },
                 },
                 temperature=0,
-                max_tokens=4096,
-                timeout=120,
+                max_tokens=8192,
+                timeout=180,
             )
 
             result = response.choices[0].message.content
@@ -277,7 +286,7 @@ def correct_sql(
 
         except Exception as e:
             print(f"Attempt {attempt + 1} failed in SQL verification: {e}")
-            if attempt == 2:
+            if attempt == 1:
                 print(f"Error in SQL verification: {e}")
                 return initial_sql_cleaned
 
@@ -370,7 +379,7 @@ def construct_prompt_task(
     )
 
 
-def collect_response_from_gpt(
+def collect_response_from_model(
     db_path_list,
     question_list,
     llm_api_key,
@@ -397,7 +406,7 @@ def collect_response_from_gpt(
     db_schemas=None,
 ):
     """
-    Collect responses from GPT using multiple threads.
+    Collect responses from model using multiple threads.
     """
     client = init_client(llm_api_key, llm_url)
 
@@ -499,7 +508,7 @@ if __name__ == "__main__":
             db_schemas = None
 
     if args.use_knowledge == "True":
-        responses = collect_response_from_gpt(
+        responses = collect_response_from_model(
             db_path_list,
             question_list,
             args.llm_api_key,
@@ -526,7 +535,7 @@ if __name__ == "__main__":
             db_schemas,
         )
     else:
-        responses = collect_response_from_gpt(
+        responses = collect_response_from_model(
             db_path_list,
             question_list,
             args.llm_api_key,
@@ -566,9 +575,6 @@ if __name__ == "__main__":
 
     output_name = (
         args.data_output_path
-        + "predict_"
-        + args.mode
-        + "_"
         + args.llm_model
         + cot_str
         + flags_str
