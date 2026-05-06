@@ -13,6 +13,7 @@ from evaluation_utils import (
     package_sqls,
     print_data,
     sort_results,
+    save_results_to_csv,
 )
 from func_timeout import FunctionTimedOut, func_timeout
 from tqdm import tqdm
@@ -48,10 +49,10 @@ def execute_sql(sql, db_path, sql_dialect, return_time=False):
         return res
 
     try:
-        return func_timeout(300, _execute_sql_internal)
+        return func_timeout(60, _execute_sql_internal)
     except FunctionTimedOut:
         if return_time:
-            return 300.0
+            return 60.0
         return None
 
 
@@ -276,6 +277,17 @@ if __name__ == "__main__":
     )
     score_lists = [simple_ves, moderate_ves, challenging_ves, ves]
     print_data(score_lists, count_lists, metric="R-VES", result_log_file=args.output_log_path)
+
+    save_results_to_csv(
+        predicted_sql_path=args.predicted_sql_path,
+        sql_dialect=args.sql_dialect,
+        metric="R-VES",
+        value_simple=simple_ves,
+        value_moderate=moderate_ves,
+        value_challenging=challenging_ves,
+        value_total=ves,
+    )
+
     print(
         "==========================================================================================="
     )

@@ -10,6 +10,7 @@ from evaluation_utils import (
     package_sqls,
     print_data,
     sort_results,
+    save_results_to_csv,
 )
 from func_timeout import FunctionTimedOut, func_timeout
 from tqdm import tqdm
@@ -176,6 +177,16 @@ if __name__ == "__main__":
     )
     score_lists = [simple_acc, moderate_acc, challenging_acc, acc]
     print_data(score_lists, count_lists, metric="EX", result_log_file=args.output_log_path)
+
+    save_results_to_csv(
+        predicted_sql_path=args.predicted_sql_path,
+        sql_dialect=args.sql_dialect,
+        metric="EX",
+        value_simple=simple_acc,
+        value_moderate=moderate_acc,
+        value_challenging=challenging_acc,
+        value_total=acc,
+    )
 
     generate_evaluated_json(
         diff_json_path=args.diff_json_path,
