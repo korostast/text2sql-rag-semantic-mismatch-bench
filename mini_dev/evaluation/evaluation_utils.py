@@ -8,26 +8,30 @@ from datetime import datetime
 import psycopg2
 import pymysql
 
-
-# Path to the shared CSV results file
 CSV_OUTPUT_PATH = "eval_result/results.csv"
 
 
 def classify_experiment_type(model_name):
-    if '_dyn-examples_rerank-examples_dyn-values' in model_name:
-        return 'Dyn-examples & rerank-examples & dyn-values'
-    elif '_dyn-examples_rerank-examples' in model_name:
-        return 'Dyn-examples & rerank-examples'
-    elif '_dyn-examples' in model_name:
-        return 'Dyn-examples'
+    if "_dyn-examples_rerank-examples_dyn-values" in model_name:
+        return "Dyn-examples & rerank-examples & dyn-values"
+    elif "_dyn-examples_rerank-examples" in model_name:
+        return "Dyn-examples & rerank-examples"
+    elif "_dyn-examples_dyn-values":
+        return "Dyn-examples & dyn-values"
+    elif "_dyn-examples" in model_name:
+        return "Dyn-examples"
+    elif "_dyn-values" in model_name:
+        return "Dyn-values"
     else:
-        return 'Baseline'
+        return "Baseline"
 
 
 def clean_model_name(model_name):
-    model_name = re.sub(r'_dyn-examples_rerank-examples_dyn-values$', '', model_name)
-    model_name = re.sub(r'_dyn-examples_rerank-examples$', '', model_name)
-    model_name = re.sub(r'_dyn-examples$', '', model_name)
+    model_name = re.sub(r"_dyn-examples_rerank-examples_dyn-values$", "", model_name)
+    model_name = re.sub(r"_dyn-examples_rerank-examples$", "", model_name)
+    model_name = re.sub(r"_dyn-examples$", "", model_name)
+    model_name = re.sub(r"_dyn-examples_dyn-values$", "", model_name)
+    model_name = re.sub(r"_dyn-values$", "", model_name)
     return model_name
 
 
@@ -133,7 +137,15 @@ def sort_results(list_of_dicts):
     return sorted(list_of_dicts, key=lambda x: x["sql_idx"])
 
 
-def save_results_to_csv(predicted_sql_path, sql_dialect, metric, value_simple, value_moderate, value_challenging, value_total):
+def save_results_to_csv(
+    predicted_sql_path,
+    sql_dialect,
+    metric,
+    value_simple,
+    value_moderate,
+    value_challenging,
+    value_total,
+):
     """
     Save evaluation results to a shared CSV file
     """
@@ -150,17 +162,34 @@ def save_results_to_csv(predicted_sql_path, sql_dialect, metric, value_simple, v
     with open(CSV_OUTPUT_PATH, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         if not file_exists:
-            writer.writerow([
-                "start_date", "model", "sql_dialect", "type", "metric",
-                "value_simple", "value_moderate", "value_challenging", "value_total"
-            ])
+            writer.writerow(
+                [
+                    "start_date",
+                    "model",
+                    "sql_dialect",
+                    "type",
+                    "metric",
+                    "value_simple",
+                    "value_moderate",
+                    "value_challenging",
+                    "value_total",
+                ]
+            )
 
         start_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        writer.writerow([
-            start_date, clean_model, sql_dialect, model_type, metric,
-            round(value_simple, 2), round(value_moderate, 2),
-            round(value_challenging, 2), round(value_total, 2)
-        ])
+        writer.writerow(
+            [
+                start_date,
+                clean_model,
+                sql_dialect,
+                model_type,
+                metric,
+                round(value_simple, 2),
+                round(value_moderate, 2),
+                round(value_challenging, 2),
+                round(value_total, 2),
+            ]
+        )
 
 
 def print_data(score_lists, count_lists, metric="F1 Score", result_log_file=None):

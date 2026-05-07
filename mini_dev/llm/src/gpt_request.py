@@ -447,9 +447,7 @@ def collect_response_from_model(
 
     responses = []
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
-        future_to_task = {
-            executor.submit(worker_function, task): task for task in tasks
-        }
+        future_to_task = {executor.submit(worker_function, task): task for task in tasks}
         for future in tqdm(concurrent.futures.as_completed(future_to_task), total=len(tasks)):
             responses.append(future.result())
 

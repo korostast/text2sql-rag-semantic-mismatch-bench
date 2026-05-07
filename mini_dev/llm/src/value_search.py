@@ -1,4 +1,3 @@
-
 from openai import OpenAI as OpenAIClient
 from opensearchpy import OpenSearch
 

@@ -8,12 +8,11 @@ import time
 import numpy as np
 from evaluation_utils import (
     connect_db,
-    execute_sql,
     load_jsonl,
     package_sqls,
     print_data,
-    sort_results,
     save_results_to_csv,
+    sort_results,
 )
 from func_timeout import FunctionTimedOut, func_timeout
 from tqdm import tqdm
