@@ -1,0 +1,85 @@
+start_date,model,sql_dialect,type,metric,value_simple,value_moderate,value_challenging,value_total
+2026-05-05 20:40:54,nemotron-3-nano-30b-a3b,SQLite,Baseline,EX,67.57,44.4,26.47,47.6
+2026-05-05 20:52:13,nemotron-3-nano-30b-a3b,SQLite,Baseline,R-VES,65.22,42.22,25.77,45.67
+2026-05-05 20:52:47,nemotron-3-nano-30b-a3b,SQLite,Baseline,Soft-F1,71.79,50.67,34.34,53.59
+2026-05-05 20:53:20,nemotron-3-super-120b-a12b,SQLite,Baseline,EX,68.24,48.8,43.14,53.4
+2026-05-05 21:01:08,nemotron-3-super-120b-a12b,SQLite,Baseline,R-VES,65.66,45.74,41.51,50.77
+2026-05-05 21:01:44,nemotron-3-super-120b-a12b,SQLite,Baseline,Soft-F1,74.29,53.8,50.25,59.14
+2026-05-05 21:01:55,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples,EX,66.89,44.4,42.16,50.6
+2026-05-05 21:09:11,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples,R-VES,64.68,41.64,40.79,48.29
+2026-05-05 21:09:24,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples,Soft-F1,69.88,49.17,46.88,54.83
+2026-05-05 21:09:55,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,75.0,51.6,50.98,58.4
+2026-05-05 21:20:47,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,71.93,48.87,48.98,55.72
+2026-05-05 21:21:18,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,77.48,56.48,56.82,62.76
+2026-05-05 21:21:52,nemotron-3-super-120b-a12b,SQLite,Dyn-examples,EX,68.24,54.8,44.12,56.6
+2026-05-05 21:28:21,nemotron-3-super-120b-a12b,SQLite,Dyn-examples,R-VES,65.05,51.64,43.51,53.95
+2026-05-05 21:28:53,nemotron-3-super-120b-a12b,SQLite,Dyn-examples,Soft-F1,71.74,59.33,48.6,60.82
+2026-05-05 21:29:25,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,64.86,45.6,38.24,49.8
+2026-05-05 21:36:58,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,61.87,43.16,37.01,47.44
+2026-05-05 21:37:30,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,68.03,50.52,43.54,54.27
+2026-05-05 21:37:37,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,45.27,17.6,8.82,24.0
+2026-05-05 21:39:54,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,43.16,16.17,8.14,22.52
+2026-05-05 21:40:01,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,45.91,21.12,11.05,26.41
+2026-05-05 21:40:12,mistral-medium-3.5-128b,SQLite,Dyn-examples,EX,62.84,46.8,44.12,51.0
+2026-05-05 21:44:19,mistral-medium-3.5-128b,SQLite,Dyn-examples,R-VES,60.59,43.89,41.85,48.42
+2026-05-05 21:44:27,mistral-medium-3.5-128b,SQLite,Dyn-examples,Soft-F1,66.07,50.19,49.38,54.72
+2026-05-05 21:44:41,mistral-medium-3.5-128b,SQLite,Dyn-examples & rerank-examples,EX,66.22,49.6,40.2,52.6
+2026-05-05 21:49:28,mistral-medium-3.5-128b,SQLite,Dyn-examples & rerank-examples,R-VES,62.9,47.12,37.59,49.85
+2026-05-05 21:49:41,mistral-medium-3.5-128b,SQLite,Dyn-examples & rerank-examples,Soft-F1,69.36,53.92,42.68,56.2
+2026-05-05 21:49:55,mistral-medium-3.5-128b,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,65.54,48.4,40.2,51.8
+2026-05-05 21:54:27,mistral-medium-3.5-128b,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,63.28,45.8,38.31,49.45
+2026-05-05 21:54:42,mistral-medium-3.5-128b,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,68.7,53.76,44.79,56.35
+2026-05-05 21:55:13,Mistral-7B-Instruct-v0.3,SQLite,Baseline,EX,41.89,14.4,7.84,21.2
+2026-05-05 22:01:35,Mistral-7B-Instruct-v0.3,SQLite,Baseline,R-VES,39.96,13.49,7.18,20.04
+2026-05-05 22:02:06,Mistral-7B-Instruct-v0.3,SQLite,Baseline,Soft-F1,44.38,16.43,8.96,23.18
+2026-05-05 22:02:37,mistral-medium-3.5-128b,SQLite,Baseline,EX,63.51,47.2,37.25,50.0
+2026-05-05 22:08:22,mistral-medium-3.5-128b,SQLite,Baseline,R-VES,61.25,44.78,35.76,47.81
+2026-05-05 22:08:53,mistral-medium-3.5-128b,SQLite,Baseline,Soft-F1,70.47,53.43,41.03,55.94
+2026-05-05 22:09:24,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples,EX,38.51,17.2,6.86,21.4
+2026-05-05 22:16:01,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples,R-VES,37.21,15.98,5.92,20.21
+2026-05-05 22:16:33,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples,Soft-F1,39.06,20.12,9.09,23.48
+2026-05-05 22:16:36,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples,EX,39.19,15.6,6.86,20.8
+2026-05-05 22:18:43,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples,R-VES,38.15,14.11,6.98,19.77
+2026-05-05 22:18:46,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples,Soft-F1,40.29,17.13,7.89,22.1
+2026-05-05 22:18:49,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,39.19,23.6,21.57,27.8
+2026-05-05 22:20:18,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,37.37,22.8,21.03,26.75
+2026-05-05 22:20:22,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,41.56,25.69,21.98,29.63
+2026-05-05 22:20:55,gpt-oss-20b,SQLite,Dyn-examples,EX,68.24,50.4,38.24,53.2
+2026-05-05 22:27:14,gpt-oss-20b,SQLite,Dyn-examples,R-VES,65.53,47.12,36.76,50.46
+2026-05-05 22:27:46,gpt-oss-20b,SQLite,Dyn-examples,Soft-F1,71.97,55.12,39.74,56.97
+2026-05-05 22:28:20,gpt-oss-120b,SQLite,Baseline,EX,68.92,45.6,45.1,52.4
+2026-05-05 22:35:16,gpt-oss-120b,SQLite,Baseline,R-VES,65.69,42.76,43.29,49.66
+2026-05-05 22:35:50,gpt-oss-120b,SQLite,Baseline,Soft-F1,74.45,53.56,51.92,59.41
+2026-05-05 22:36:23,gpt-oss-120b,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,70.95,53.2,50.98,58.0
+2026-05-05 22:42:07,gpt-oss-120b,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,68.63,50.21,48.54,55.32
+2026-05-05 22:42:40,gpt-oss-120b,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,77.07,59.79,56.11,64.16
+2026-05-05 22:43:14,gpt-oss-20b,SQLite,Dyn-examples & rerank-examples,EX,68.92,48.4,46.08,54.0
+2026-05-05 22:50:38,gpt-oss-20b,SQLite,Dyn-examples & rerank-examples,R-VES,67.41,45.93,43.76,51.84
+2026-05-05 22:51:11,gpt-oss-20b,SQLite,Dyn-examples & rerank-examples,Soft-F1,71.63,53.98,49.97,58.39
+2026-05-05 22:51:45,gpt-oss-120b,SQLite,Dyn-examples & rerank-examples,EX,70.95,50.8,50.98,56.8
+2026-05-05 23:02:31,gpt-oss-120b,SQLite,Dyn-examples & rerank-examples,R-VES,68.28,47.83,48.83,54.09
+2026-05-05 23:03:05,gpt-oss-120b,SQLite,Dyn-examples & rerank-examples,Soft-F1,74.66,56.93,52.55,61.28
+2026-05-05 23:03:36,gpt-oss-20b,SQLite,Baseline,EX,65.54,48.0,35.29,50.6
+2026-05-05 23:12:00,gpt-oss-20b,SQLite,Baseline,R-VES,62.86,44.95,34.2,48.06
+2026-05-05 23:12:31,gpt-oss-20b,SQLite,Baseline,Soft-F1,71.16,53.09,43.45,56.47
+2026-05-05 23:12:38,gpt-oss-120b,SQLite,Dyn-examples,EX,71.62,50.0,46.08,55.6
+2026-05-05 23:18:57,gpt-oss-120b,SQLite,Dyn-examples,R-VES,68.58,47.07,44.46,52.9
+2026-05-05 23:19:04,gpt-oss-120b,SQLite,Dyn-examples,Soft-F1,76.58,55.79,49.61,60.68
+2026-05-05 23:19:11,gpt-oss-20b,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,68.24,51.2,45.1,55.0
+2026-05-05 23:25:23,gpt-oss-20b,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,66.46,48.16,43.84,52.69
+2026-05-05 23:25:31,gpt-oss-20b,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,71.42,55.56,48.15,58.74
+2026-05-05 23:26:02,gemma-3n-e4b-it,SQLite,Dyn-examples,EX,45.27,24.0,23.53,30.2
+2026-05-05 23:33:32,gemma-3n-e4b-it,SQLite,Dyn-examples,R-VES,42.08,22.81,22.69,28.49
+2026-05-05 23:34:04,gemma-3n-e4b-it,SQLite,Dyn-examples,Soft-F1,46.71,26.84,24.83,32.31
+2026-05-05 23:34:11,gemma-3n-e4b-it,SQLite,Baseline,EX,42.57,28.0,18.63,30.4
+2026-05-05 23:39:13,gemma-3n-e4b-it,SQLite,Baseline,R-VES,40.62,26.63,18.35,29.08
+2026-05-05 23:39:20,gemma-3n-e4b-it,SQLite,Baseline,Soft-F1,45.47,30.62,21.12,33.08
+2026-05-05 23:39:23,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples,EX,40.54,23.2,18.63,27.4
+2026-05-05 23:40:54,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples,R-VES,38.9,22.56,17.67,26.4
+2026-05-05 23:40:57,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples,Soft-F1,42.91,25.34,19.17,29.28
+2026-05-06 10:21:29,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples,EX,70.27,51.2,44.12,55.4
+2026-05-06 10:25:24,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples,EX,67.57,43.6,36.27,49.2
+2026-05-06 10:29:41,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples,R-VES,66.0,41.62,34.93,47.47
+2026-05-06 10:29:50,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples,R-VES,68.42,49.15,42.51,53.5
+2026-05-06 10:30:13,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples,Soft-F1,70.71,49.05,40.71,53.76
+2026-05-06 10:30:22,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples,Soft-F1,74.36,55.89,51.06,60.37
