@@ -88,20 +88,23 @@ class ValueSearchClient:
                 body={
                     "size": k,
                     "query": {
-                        "bool": {
-                            "must": [
-                                {"term": {"db_id": db_id}},
-                                {"term": {"table_name": table_name}},
-                                {"term": {"column_name": column_name}},
-                            ],
-                            "should": [
-                                {"match": {"value": {"query": value, "operator": "or"}}},
-                                {"knn": {"value_embedding": {"vector": query_embedding, "k": k}}},
-                            ],
+                        "knn": {
+                            "value_embedding": {
+                                "vector": query_embedding,
+                                "k": k,
+                                "filter": {
+                                    "bool": {
+                                        "must": [
+                                            {"term": {"db_id": db_id}},
+                                            {"term": {"table_name": table_name}},
+                                            {"term": {"column_name": column_name}}
+                                        ]
+                                    }
+                                }
+                            }
                         }
-                    },
+                    }
                 },
-                params={"search_pipeline": "rrf-pipeline-values"},
             )
 
             results = []
