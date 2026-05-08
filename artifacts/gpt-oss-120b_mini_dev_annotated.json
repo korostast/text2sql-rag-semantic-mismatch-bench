@@ -23,7 +23,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка SUM(ym.Consumption) AS total_consumption в ответе"
@@ -65,7 +65,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка SUM(Consumption) AS TotalConsumption в ответе"
@@ -83,7 +83,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
+            "Output Format",
             "Evidence Misinterpretation"
         ],
         "error_explanation": [
@@ -103,7 +103,7 @@
         "error": "no such table: segment_min",
         "metric_value": 0,
         "error_type": [
-            "Scope & Syntax"
+            "Syntax"
         ],
         "error_explanation": [
             "Колонка segment_min определена внутри подзапроса WITH, но модель пытается получить к нему доступ из внешнего запроса SELECT"
@@ -151,7 +151,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "'discount' != 'Discount'"
@@ -169,7 +169,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель возвращает две отдельные колонки (булево значение для ответа 'Is it true' и саму разницу), при этом gold-запрос возвращает только одно скалярное значение разницы"
@@ -217,7 +217,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка Month"
@@ -236,8 +236,8 @@
         "metric_value": 0,
         "error_type": [
             "Evidence Misinterpretation",
-            "Schema Linking Errors",
-            "Projection & Format"
+            "Schema Linking",
+            "Output Format"
         ],
         "error_explanation": [
             "Модель проигнорировала информацию об yearmonth таблице из evidence",
@@ -258,7 +258,7 @@
         "metric_value": 0,
         "error_type": [
             "Evidence Misinterpretation",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель проигнорировала информацию об yearmonth таблице из evidence",
@@ -367,7 +367,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors",
+            "Schema Linking",
             "Aggregation & Ordering"
         ],
         "error_explanation": [
@@ -423,7 +423,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "'premium' != 'Premium'"
@@ -441,7 +441,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель вычисляет сумму как SUM(Amount * Price), в то время как gold-запрос использует только SUM(Price)."
@@ -477,7 +477,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка CustomerID"
@@ -567,7 +567,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель конкатенирует first_name и last_name в одну колонку, хотя ожидаются раздельные колонки"
@@ -585,7 +585,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка expense_id"
@@ -795,7 +795,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишние колонки. Ожидалась только event_name, но модель решила вернуть все колонки, принадлежащие событию"
@@ -837,7 +837,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
+            "Output Format",
             "Over/Under Filtering"
         ],
         "error_explanation": [
@@ -857,8 +857,8 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
-            "Schema Linking Errors"
+            "Output Format",
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель конкатенирует first_name и last_name в одну колонку, хотя ожидаются раздельные колонки",
@@ -937,7 +937,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Gold ожидает ответ в виде строки YES, но модель вернула boolean. Впрочем, это можно даже пометить как Incorrect Gold, так как в запросе не указывается формат выхода"
@@ -980,7 +980,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "В запросе просится вернуть типы трат для аппрувнутых событий (...approved for 'October Meeting' event), но gold запрос не фильтрует по колонке approved",
@@ -1023,7 +1023,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель конкатенирует first_name и last_name в одну колонку, хотя ожидаются раздельные колонки"
@@ -1077,7 +1077,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "В ответе отсутствует колонка type"
@@ -1127,7 +1127,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель конкатенирует first_name и last_name в одну колонку, хотя ожидаются раздельные колонки"
@@ -1145,7 +1145,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель конкатенирует first_name и last_name в одну колонку, хотя ожидаются раздельные колонки"
@@ -1163,7 +1163,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель конкатенирует first_name и last_name в одну колонку, хотя ожидаются раздельные колонки"
@@ -1265,7 +1265,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель пропустила оператор DISTINCT, что могло привести к дублированию строк в ответе"
@@ -1445,7 +1445,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Вместо возврата только ID пациента, модель возвращает все доступные атрибуты из таблицы Patient"
@@ -1571,7 +1571,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Функция date('NOW') в gold-запросе, модель использует 'now' внутри strftime, что может давать разные результаты из-за обработки времени"
@@ -1625,7 +1625,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Порядок столбцов в SELECT у модели отличается от ожидаемого в gold-запросе"
@@ -1687,7 +1687,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Вместо возврата только ID пациента, модель выводит все столбцы таблицы Patient"
@@ -1795,7 +1795,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель ошибочно извлекает поле Diagnosis из таблицы Examination, тогда как по структуре БД ожидалось использование таблицы Patient"
@@ -1845,7 +1845,7 @@
         "error_type": [
             "Incorrect Gold",
             "Evidence Misinterpretation",
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "В gold-запросе пропущены обязательные скобки вокруг оператора OR, что ломает приоритет фильтрации",
@@ -1867,7 +1867,7 @@
         "error_type": [
             "Evidence Misinterpretation",
             "Aggregation & Ordering",
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель неправильно поняла сопоставление строковых значений для колонки SM ('-' means 'negative', и т.д.), проигнорировав прямое указание в evidence",
@@ -1900,7 +1900,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель в точности применила значения из evidence ('-', '+-'), в то время как gold-запрос проигнорировал evidence и использовал ('negative', '0')",
@@ -2005,7 +2005,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишние колонки (имя игрока, скорость и дата)"
@@ -2095,7 +2095,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
+            "Output Format",
             "Aggregation & Ordering"
         ],
         "error_explanation": [
@@ -2127,7 +2127,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка birthday"
@@ -2169,7 +2169,7 @@
         "error": "ORDER BY clause should come after UNION ALL not before",
         "metric_value": 0,
         "error_type": [
-            "Scope & Syntax"
+            "Syntax"
         ],
         "error_explanation": [
             "Использование ORDER BY и LIMIT внутри UNION ALL без оборачивания в подзапрос"
@@ -2223,7 +2223,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
+            "Output Format",
             "Aggregation & Ordering"
         ],
         "error_explanation": [
@@ -2447,7 +2447,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель использует неверный строковый формат даты '2013/7/12' (вместо '2013-07-12'). Модель не знала формат данных в таблице"
@@ -2537,7 +2537,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель вернула колонку player_api_id (api id for the player) вместо ожидаемой gold-запросом id (id for the player)"
@@ -2555,7 +2555,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель вернула колонку player_api_id (api id for the player) вместо ожидаемой gold-запросом id (id for the player)"
@@ -2585,7 +2585,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Для JOIN модель выбрала ключ team_fifa_api_id вместо team_api_id"
@@ -2621,7 +2621,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка COUNT(Match.id) AS games"
@@ -2783,7 +2783,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишние колонки driverId и dob"
@@ -2801,7 +2801,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка driverId"
@@ -2819,7 +2819,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка location"
@@ -2879,7 +2879,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишние колонки driverId и dob"
@@ -2959,7 +2959,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Сгенерирована конкатенация имени и фамилии, тогда как gold-запрос ожидает их в раздельных столбцах"
@@ -2977,7 +2977,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель не включила колонку milliseconds, хотя в вопросе требуется вывести этот показатель (What is the best lap time recorded?)"
@@ -3007,7 +3007,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель использовала таблицу results вместо таблицы driverStandings для вычисления позиций гонщика"
@@ -3025,7 +3025,7 @@
         "error": "near \"JOIN\": syntax error",
         "metric_value": 0,
         "error_type": [
-            "Scope & Syntax"
+            "Syntax"
         ],
         "error_explanation": [
             "JOIN расположен после условия WHERE"
@@ -3043,7 +3043,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель выполнила конкатенацию имени и фамилии в одну колонку и изменила порядок следования столбцов"
@@ -3073,8 +3073,8 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
-            "Schema Linking Errors"
+            "Output Format",
+            "Schema Linking"
         ],
         "error_explanation": [
             "Лишние колонки raceId, year, round",
@@ -3105,7 +3105,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Использование таблицы results вместо driverStandings для подсчета очков"
@@ -3178,7 +3178,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Gold-запрос требует 3 колонки вместо запрошенной одной",
@@ -3197,7 +3197,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишние колонки year, round, rank, хотя запрашивалось только название гонки"
@@ -3245,7 +3245,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель использовала колонку 'position' для фильтрации второго места, тогда как gold-запрос подразумевает использование колонки 'rank'"
@@ -3276,7 +3276,7 @@
         "metric_value": 0,
         "error_type": [
             "Evidence Misinterpretation",
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель проигнорировала логику вычисления времени последнего гонщика, описанную в evidence",
@@ -3319,7 +3319,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель обратилась к таблице results для поиска очков, вместо нужной таблицы constructorStandings"
@@ -3338,7 +3338,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Gold-запрос возвращает не количество конструкторов, а количество гонок для каждого (GROUP BY ... HAVING COUNT(raceId) = 2. Модель же сгенерировала правильный запрос",
@@ -3370,7 +3370,7 @@
         "metric_value": 0,
         "error_type": [
             "Aggregation & Ordering",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель восприняла 'champion' как чемпиона всего сезона (используя driverStandings), а не как победителя отдельной гонки",
@@ -3390,7 +3390,7 @@
         "metric_value": 0,
         "error_type": [
             "Evidence Misinterpretation",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель проигнорировала подсказку из evidence о поиске чемпиона через формат строки времени (LIKE)",
@@ -3421,7 +3421,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель использовала столбец lapTimes.lap вместо results.laps для фильтрации количества кругов"
@@ -3470,7 +3470,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Gold-запрос игнорирует требование вывести коды водителей (State code numbers of top 3...)",
@@ -3555,7 +3555,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
+            "Output Format",
             "Evidence Misinterpretation"
         ],
         "error_explanation": [
@@ -3629,7 +3629,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель объединила имя и фамилию в один столбец"
@@ -3648,7 +3648,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Gold-запрос возвращает случайную гонку. Модель же корректно пытается найти именно первую гонку по минимальной дате, в соотвествие с вопросом",
@@ -3679,7 +3679,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
+            "Output Format",
             "Evidence Misinterpretation"
         ],
         "error_explanation": [
@@ -3765,7 +3765,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель не вернула колонку с RANK()"
@@ -4056,7 +4056,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Ошибочный регистр attribute_name = 'durability' был спровоцирован некорректным значением в поле evidence. Но и сама модель не знала истинное значение в таблице",
@@ -4267,7 +4267,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка superhero_name"
@@ -4381,7 +4381,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка Reputation"
@@ -4411,7 +4411,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Сравнение строки с датой без функции date() вернёт true для дат того же дня, но с указанием точного времени"
@@ -4538,7 +4538,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "В вопросе и evidence нет намёка на формат вывода (NOT well-finished / well-finished), что делает невозможным для модели вернуть ожидаемый ответ",
@@ -4653,7 +4653,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель ошибочно обратилась к таблице comments вместо колонки Comment (описание правки) в таблице postHistory"
@@ -4671,7 +4671,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель вернула только имя пользователя, тогда как gold-запрос неявно ожидает возврата и имени, и заголовка поста"
@@ -4722,7 +4722,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Evidence предлагает использовать колонку Views, но это некорректно, ведь gold-запрос использует ViewCount",
@@ -4795,7 +4795,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка TotalViewCount"
@@ -4826,7 +4826,7 @@
         "metric_value": 0,
         "error_type": [
             "Evidence Misinterpretation",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель проигнорировала подсказку из evidence и использовала поиск по строке LIKE '%<r>%' вместо точного совпадения TagName",
@@ -4965,7 +4965,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель обратилась к колонке Body вместо Text и к OwnerUserId вместо LastEditorUserId, проигнорировав evidence"
@@ -5013,7 +5013,7 @@
         "error": "timeout",
         "metric_value": 0,
         "error_type": [
-            "Scope & Syntax"
+            "Syntax"
         ],
         "error_explanation": [
             "Неоптимальный запрос упал по таймауту"
@@ -5055,7 +5055,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка c.Score, хотя ожидался только текст комментария"
@@ -5071,7 +5071,13 @@
         "predicted_sql": "SELECT COUNT(*) \nFROM comments c\nJOIN posts p ON c.PostId = p.Id\nWHERE p.CommentCount = 1\n  AND c.Score = 0;",
         "executable": true,
         "error": null,
-        "metric_value": 0
+        "metric_value": 0,
+        "error_type": [
+            "Incorrect Gold"
+        ],
+        "error_explanation": [
+            "Gold-запрос фильтрует по оценке поста (T2.Score = 0). Модель корректно отфильтровала по оценке комментария (c.Score = 0)"
+        ]
     },
     {
         "question_id": 716,
@@ -5103,7 +5109,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишние колонки name, cardKingdomFoilId, cardKingdomId"
@@ -5122,7 +5128,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Gold-запрос содержит явную логическую ошибку (дублирование cardKingdomId IS NULL), тогда как модель написала условие правильно",
@@ -5141,7 +5147,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишние колонки name, setCode, rarity"
@@ -5159,7 +5165,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка name"
@@ -5190,7 +5196,7 @@
         "metric_value": 0,
         "error_type": [
             "Evidence Misinterpretation",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель проигнорировала evidence и использовала строку 'Stephen Daniel' вместо правильного 'Stephen Daniele'",
@@ -5271,7 +5277,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка l.status"
@@ -5361,7 +5367,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишняя колонка c.uuid"
@@ -5427,7 +5433,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors",
+            "Schema Linking",
             "Evidence Misinterpretation"
         ],
         "error_explanation": [
@@ -5447,7 +5453,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Поиск текста осуществлен по таблице cards, а не по таблице rulings"
@@ -5477,7 +5483,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель использовала неверное название колонки c.type вместо правильного types и применила LIKE вместо точного совпадения"
@@ -5567,7 +5573,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель искала языки карт сета в таблице foreign_data, вместо того чтобы искать языки самого сета в таблице set_translations"
@@ -5621,8 +5627,8 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors",
-            "Projection & Format"
+            "Schema Linking",
+            "Output Format"
         ],
         "error_explanation": [
             "Модель проверила наличие корейского перевода для конкретной карты, а не для её сета",
@@ -5731,7 +5737,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель искала полное имя сета 'Coldsnap' в колонке setCode (где хранятся аббревиатуры), вместо того чтобы сделать JOIN с таблицей sets"
@@ -5809,7 +5815,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель пытается искать полное название 'Coldsnap' в колонке setCode (аббревиатуры) вместо sets.name"
@@ -6117,7 +6123,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель вернула строковое значение через функцию printf, тогда как ожидалось float через функцию ROUND"
@@ -6147,7 +6153,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель вернула строковое значение через функцию printf, тогда как ожидалось float через функцию ROUND"
@@ -6370,7 +6376,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель возвращает две колонки (по одной для каждого атома из пары), тогда как gold-запрос возвращает элементы в один общий столбец",
@@ -6389,7 +6395,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель вернула строковое значение через функцию printf, тогда как ожидалось float через функцию ROUND"
@@ -6428,7 +6434,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Пропущено умножение на 100 для корректного расчета процентов в evidence",
@@ -6556,7 +6562,7 @@
         "metric_value": 0,
         "error_type": [
             "Aggregation & Ordering",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Использование ROW_NUMBER() вместо RANK(), что приводит к разным результатам при совпадении баллов",
@@ -6575,7 +6581,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель выполнила конкатенацию атрибутов адреса в одну строку вместо их раздельного вывода"
@@ -6607,7 +6613,7 @@
         "error_type": [
             "Evidence Misinterpretation",
             "Aggregation & Ordering",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель проигнорировала подсказку из evidence о вычислении среднего значения (Average of average math...)",
@@ -6628,8 +6634,8 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format",
-            "Literals & Types"
+            "Output Format",
+            "Values & Types"
         ],
         "error_explanation": [
             "Gold-запрос использует только 'Free Meal Count', хотя в вопросе явно запрашивается 'free or reduced' (FRPM)",
@@ -6668,7 +6674,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "В вопросе запрашиваются 'names and DOC type', но gold-запрос вместо DOC type возвращает просто DOC",
@@ -6687,8 +6693,8 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
-            "Literals & Types"
+            "Output Format",
+            "Values & Types"
         ],
         "error_explanation": [
             "Лишняя колонка CDSCode",
@@ -6707,9 +6713,9 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
-            "Schema Linking Errors",
-            "Literals & Types"
+            "Output Format",
+            "Schema Linking",
+            "Values & Types"
         ],
         "error_explanation": [
             "Лишняя колонка CDSCode",
@@ -6747,7 +6753,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель объединила имена и фамилии в одну строку вместо раздельных"
@@ -6819,7 +6825,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Лишние колонки CDSCode, EnrollmentK12"
@@ -6868,7 +6874,7 @@
         "metric_value": 0,
         "error_type": [
             "Evidence Misinterpretation",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Проигнорирована подсказка evidence об использовании MailStreet (выбрана колонка Street)",
@@ -6899,7 +6905,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types",
+            "Values & Types",
             "Aggregation & Ordering"
         ],
         "error_explanation": [
@@ -6919,8 +6925,8 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
-            "Schema Linking Errors"
+            "Output Format",
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель выбрала нерелевантную колонку CDSCode",
@@ -6951,7 +6957,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Использованы колонки Low Grade и High Grade из таблицы frpm вместо GSoffered из schools"
@@ -6970,7 +6976,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Scope & Syntax"
+            "Syntax"
         ],
         "error_explanation": [
             "Gold-запрос проигнорировал первую часть вопроса пользователя (...how many offers Multiple Provision Types?) и выполнил только вторую",
@@ -7025,7 +7031,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель использовала 'East Bohemia' вместо ожидаемого 'east Bohemia'"
@@ -7055,7 +7061,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель использовала 'North Bohemia' вместо ожидаемого 'north Bohemia'"
@@ -7110,7 +7116,7 @@
         "metric_value": 0,
         "error_type": [
             "Over/Under Filtering",
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "Модель добавила избыточный фильтр статуса, опираясь на слово 'approved' из текста вопроса. Gold-запрос правильно игнорирует это условие фильтрации, потому что наличие записи в таблице loan уже подразумевает выданный (approved) кредит",
@@ -7129,7 +7135,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format",
+            "Output Format",
             "Aggregation & Ordering"
         ],
         "error_explanation": [
@@ -7173,7 +7179,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Literals & Types"
+            "Values & Types"
         ],
         "error_explanation": [
             "'South Bohemia' вместо 'south Bohemia'"
@@ -7215,7 +7221,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель применила округление ROUND(..., 2), что изменило точность результата и привело к несовпадению с gold-запросом"
@@ -7234,7 +7240,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Gold-запрос ошибочно выводит только процент, игнорируя просьбу показать район (list the district...)",
@@ -7284,7 +7290,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Gold-запрос сортирует районы по алфавиту (ORDER BY A2 ASC), игнорируя условие поиска 'топ-10 снятий'. Модель же сформировала запрос правильно",
@@ -7303,7 +7309,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель ошибочно применила фильтр '1' к текстовому столбцу с названиями районов (A2) вместо идентификатора района (district_id)"
@@ -7393,7 +7399,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Модель вернула все колонки таблицы (trans.*) вместо одного идентификатора транзакции (trans_id)"
@@ -7412,7 +7418,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Projection & Format"
+            "Output Format"
         ],
         "error_explanation": [
             "Gold-запрос использует домашний регион клиента (client.district_id), хотя в вопросе сказано 'opened their accounts in the district' (account.district_id), что модель сделала правильно",
@@ -7449,7 +7455,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель искала частоту выписок и цели списания в таблице исторических транзакций (trans), тогда как эти данные являются настройками (account.frequency и order.k_symbol)"
@@ -7497,7 +7503,7 @@
         "error": null,
         "metric_value": 0,
         "error_type": [
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Модель ищет значение 'POPLATEK PO OBRATU' в таблице транзакций (trans.operation), хотя это параметр частоты выпуска выписки аккаунта (account.frequency)"
@@ -7552,7 +7558,7 @@
         "metric_value": 0,
         "error_type": [
             "Incorrect Gold",
-            "Schema Linking Errors"
+            "Schema Linking"
         ],
         "error_explanation": [
             "Gold-запрос некорректен, так как не возвращает информацию о владельце счета, игнорируя вопрос и evidence",
