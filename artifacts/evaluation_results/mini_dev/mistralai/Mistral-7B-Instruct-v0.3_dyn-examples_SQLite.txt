@@ -1,24 +1,23 @@
 start calculate EX
-                     simple               moderate             challenging          total               
-count                148                  250                  102                  500                 
+                     simple               moderate             challenging          total
+count                148                  250                  102                  500
 ======================================    EX   =====================================
-EX                   39.19                15.60                6.86                 20.80               
+EX                   39.19                15.60                6.86                 20.80
 ===========================================================================================
 Finished EX evaluation for mini dev set
 
 start calculate R-VES
-                     simple               moderate             challenging          total               
-count                148                  250                  102                  500                 
+                     simple               moderate             challenging          total
+count                148                  250                  102                  500
 ======================================    R-VES   =====================================
-R-VES                38.15                14.11                6.98                 19.77               
+R-VES                38.15                14.11                6.98                 19.77
 ===========================================================================================
 Finished R-VES evaluation for mini dev set
 
 start calculate Soft-F1
-                     simple               moderate             challenging          total               
-count                148                  250                  102                  500                 
+                     simple               moderate             challenging          total
+count                148                  250                  102                  500
 ======================================    Soft-F1   =====================================
-Soft-F1              40.29                17.13                7.89                 22.10               
+Soft-F1              40.29                17.13                7.89                 22.10
 ===========================================================================================
 Finished Soft-F1 evaluation for mini dev set
-

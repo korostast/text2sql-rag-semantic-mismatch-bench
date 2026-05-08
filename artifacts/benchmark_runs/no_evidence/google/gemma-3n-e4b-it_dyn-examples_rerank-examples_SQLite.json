@@ -207,7 +207,7 @@
     "205": "SELECT DISTINCT\n  R.name\nFROM Races AS R\nJOIN Drivers AS D\n  ON R.driverId = D.driverId\nWHERE\n  D.driverRef = 'AYoong' AND R.round < 20;\t----- bird -----\tformula_1",
     "206": "SELECT T1.name, T1.year FROM races AS T1 INNER JOIN results AS T2 ON T1.raceId = T2.raceId INNER JOIN drivers AS T3 ON T2.driverId = T3.driverId WHERE T3.surname = 'Schumacher' ORDER BY T2.milliseconds ASC LIMIT 1\t----- bird -----\tformula_1",
     "207": "SELECT T1.name, T2.points FROM races AS T1 INNER JOIN results AS T2 ON T1.raceId = T2.raceId WHERE T1.name = 'British Grand Prix' AND T2.driverId = (SELECT driverId FROM drivers WHERE surname = 'Hamilton' AND forename = 'Lewis')\t----- bird -----\tformula_1",
-    "208": "SELECT CAST(SUM(IIF(T3.country = 'Germany', 1, 0)) AS REAL) * 100 / COUNT(T1.raceId) FROM races AS T1 INNER JOIN circuits AS T2 ON T1.circuitId = T2.circuitId INNER JOIN countries AS T3 ON T2.country = T3.name WHERE T2.name IN ('Monza', 'Silverstone', 'Hockenheimring', 'N\u00fcrburgring', 'N\u00fcrburgring Nordschleife')\t----- bird -----\tformula_1",
+    "208": "SELECT CAST(SUM(IIF(T3.country = 'Germany', 1, 0)) AS REAL) * 100 / COUNT(T1.raceId) FROM races AS T1 INNER JOIN circuits AS T2 ON T1.circuitId = T2.circuitId INNER JOIN countries AS T3 ON T2.country = T3.name WHERE T2.name IN ('Monza', 'Silverstone', 'Hockenheimring', 'Nürburgring', 'Nürburgring Nordschleife')\t----- bird -----\tformula_1",
     "209": "SELECT lat, lng FROM circuits WHERE name = 'Silverstone Circuit'\t----- bird -----\tformula_1",
     "210": "SELECT\n  name\nFROM circuits\nWHERE\n  name = 'Marina Bay Street Circuit';\t----- bird -----\tformula_1",
     "211": "SELECT T1.nationality FROM drivers AS T1 ORDER BY T1.dob LIMIT 1\t----- bird -----\tformula_1",
