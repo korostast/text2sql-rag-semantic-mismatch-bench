@@ -97,13 +97,13 @@ class ValueSearchClient:
                                         "must": [
                                             {"term": {"db_id": db_id}},
                                             {"term": {"table_name": table_name}},
-                                            {"term": {"column_name": column_name}}
+                                            {"term": {"column_name": column_name}},
                                         ]
                                     }
-                                }
+                                },
                             }
                         }
-                    }
+                    },
                 },
             )
 

@@ -377,7 +377,7 @@
     "375": "SELECT DISTINCT\n  T2.language\nFROM sets AS T1\nINNER JOIN set_translations AS T2\n  ON T1.code = T2.setCode\nWHERE\n  T1.name = 'Archenemy' AND T1.code = 'ARC';\t----- bird -----\tcard_games",
     "376": "SELECT T2.language FROM foreign_data AS T1 INNER JOIN set_translations AS T2 ON T1.uuid = T2.uuid WHERE T1.name = 'A Pedra Fellwar'\t----- bird -----\tcard_games",
     "377": "SELECT name FROM cards WHERE name = 'Serra Angel'\nSELECT name FROM cards WHERE name = 'Shrine Keeper'\t----- bird -----\tcard_games",
-    "378": "SELECT T2.name FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.code WHERE T2.language = 'Italian' AND T1.name = 'Ancestor\u0432\u0402\u2122s Chosen'\t----- bird -----\tcard_games",
+    "378": "SELECT T2.name FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.code WHERE T2.language = 'Italian' AND T1.name = 'AncestorвЂ™s Chosen'\t----- bird -----\tcard_games",
     "379": "SELECT T2.name FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.name = 'Ancestor''s Chosen' AND T2.language = 'Korean'\t----- bird -----\tcard_games",
     "380": "SELECT\n  COUNT(T1.id)\nFROM cards AS T1\nINNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid\nINNER JOIN sets AS T3 ON T2.uuid = T3.uuid\nWHERE\n  T3.name = 'Hauptset Zehnte Edition' AND T1.artist = 'Adam Rex';\t----- bird -----\tcard_games",
     "381": "SELECT T2.translation FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.name = 'Eighth Edition' AND T2.language = 'Chinese Simplified'\t----- bird -----\tcard_games",
