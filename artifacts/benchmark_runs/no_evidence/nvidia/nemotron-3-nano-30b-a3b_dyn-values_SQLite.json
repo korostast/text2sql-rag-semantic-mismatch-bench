@@ -353,7 +353,7 @@
     "351": "SELECT c.name AS card_name,\n       r.text AS ruling_text,\n       CASE WHEN c.artist IS NULL OR c.name IS NULL OR c.text IS NULL OR c.type IS NULL THEN 1 ELSE 0 END AS has_missing_or_degraded\nFROM cards c\nJOIN rulings r ON c.uuid = r.uuid\nWHERE c.artist = 'Stephen Daniele';\t----- bird -----\tcard_games",
     "352": "SELECT c.name AS card_name, c.artist, c.isPromo FROM cards c JOIN (SELECT uuid, COUNT(*) AS cnt FROM rulings GROUP BY uuid ORDER BY cnt DESC LIMIT 1) r ON c.uuid = r.uuid;\t----- bird -----\tcard_games",
     "353": "SELECT (COUNT(DISTINCT fd.uuid) * 100.0 / (SELECT COUNT(*) FROM cards)) AS percentage\nFROM foreign_data fd\nWHERE fd.language = 'Chinese Simplified';\t----- bird -----\tcard_games",
-    "354": "SELECT COUNT(*) FROM cards WHERE power = '\u221e';\t----- bird -----\tcard_games",
+    "354": "SELECT COUNT(*) FROM cards WHERE power = '∞';\t----- bird -----\tcard_games",
     "355": "SELECT borderColor FROM cards WHERE name = 'Ancestor''s Chosen';\t----- bird -----\tcard_games",
     "356": "SELECT r.text\nFROM rulings r\nJOIN cards c ON r.uuid = c.uuid\nWHERE c.name = 'Benalish Knight'\nLIMIT 1;\t----- bird -----\tcard_games",
     "357": "SELECT round(100.0 * (SELECT count(*) FROM cards WHERE borderColor = 'borderless') * 1.0 / (SELECT count(*) FROM cards), 2);\t----- bird -----\tcard_games",
