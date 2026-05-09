@@ -16,7 +16,7 @@ def classify_experiment_type(model_name):
         return "Dyn-examples & rerank-examples & dyn-values"
     elif "_dyn-examples_rerank-examples" in model_name:
         return "Dyn-examples & rerank-examples"
-    elif "_dyn-examples_dyn-values":
+    elif "_dyn-examples_dyn-values" in model_name:
         return "Dyn-examples & dyn-values"
     elif "_dyn-examples" in model_name:
         return "Dyn-examples"
