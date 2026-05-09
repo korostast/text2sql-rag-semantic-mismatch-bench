@@ -44,15 +44,9 @@ start_date,model,sql_dialect,type,metric,value_simple,value_moderate,value_chall
 2026-05-08 20:38:04,nemotron-3-super-120b-a12b,SQLite,Dyn-values,EX,52.03,30.8,26.47,36.2
 2026-05-08 20:41:43,nemotron-3-super-120b-a12b,SQLite,Dyn-values,R-VES,50.29,29.05,24.44,34.39
 2026-05-08 20:42:15,nemotron-3-super-120b-a12b,SQLite,Dyn-values,Soft-F1,57.08,34.81,31.92,40.81
-2026-05-08 20:42:27,nemotron-3-nano-30b-a3b,SQLite,Dyn-values,EX,63.51,45.2,33.33,48.2
-2026-05-08 20:46:33,nemotron-3-nano-30b-a3b,SQLite,Dyn-values,R-VES,62.2,43.16,31.8,46.48
-2026-05-08 20:46:44,nemotron-3-nano-30b-a3b,SQLite,Dyn-values,Soft-F1,65.76,51.29,38.88,53.04
 2026-05-08 20:47:17,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,54.73,31.2,25.49,37.0
 2026-05-08 20:51:25,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,53.26,29.33,24.04,35.33
 2026-05-08 20:51:57,nemotron-3-super-120b-a12b,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,57.07,34.81,32.79,40.99
-2026-05-08 20:52:29,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,70.95,49.6,36.27,53.2
-2026-05-08 20:56:59,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,68.32,46.95,34.78,50.79
-2026-05-08 20:57:31,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,74.3,55.46,44.08,58.71
 2026-05-08 20:57:56,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,30.41,8.4,1.96,13.6
 2026-05-08 20:58:50,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,29.19,8.17,2.08,13.15
 2026-05-08 20:59:13,Mistral-7B-Instruct-v0.3,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,31.03,10.47,4.3,15.3
@@ -83,3 +77,9 @@ start_date,model,sql_dialect,type,metric,value_simple,value_moderate,value_chall
 2026-05-08 21:29:14,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,29.05,9.6,7.84,15.0
 2026-05-08 21:31:22,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,27.63,9.32,8.07,14.48
 2026-05-08 21:31:54,gemma-3n-e4b-it,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,30.98,11.56,7.11,16.4
+2026-05-09 21:02:10,nemotron-3-nano-30b-a3b,SQLite,Dyn-values,EX,47.3,28.0,21.57,32.4
+2026-05-09 21:05:02,nemotron-3-nano-30b-a3b,SQLite,Dyn-values,R-VES,46.18,26.62,20.49,31.16
+2026-05-09 21:05:33,nemotron-3-nano-30b-a3b,SQLite,Dyn-values,Soft-F1,51.65,32.76,30.62,37.92
+2026-05-09 21:51:16,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,EX,52.7,32.0,23.53,36.4
+2026-05-09 21:53:40,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,R-VES,51.15,30.15,22.33,34.77
+2026-05-09 21:53:59,nemotron-3-nano-30b-a3b,SQLite,Dyn-examples & rerank-examples & dyn-values,Soft-F1,55.29,35.61,27.93,39.87
