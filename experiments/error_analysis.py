@@ -1,3 +1,12 @@
+"""
+This script performs error analysis on the annotated benchmark results.
+It categorizes errors into groups (Semantic Mismatch, Data Operations, Execution, Other)
+and generates a sunburst-style pie chart to visualize the distribution of error types.
+
+Example:
+    python experiments/error_analysis.py
+"""
+
 import json
 from collections import Counter
 

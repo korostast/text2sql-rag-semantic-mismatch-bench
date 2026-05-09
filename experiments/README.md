@@ -1,3 +1,7 @@
+# Experiment scripts
+
+This folder contains utility scripts.
+
 ## json_to_jsonl.py
 
 Converts JSON file to JSONL file needed for benchmark evaluation
@@ -13,5 +17,14 @@ Combines ground truth data with predicted SQL queries by merging two JSON files.
 
 Example:
 ```
-python experiments/combine_predicts_with_gold.py --ground_truth_path mini_dev/data/mini_dev_sqlite.json --predicted_sql_path mini_dev/llm/exp_result/turbo_output_kg/gpt-oss-120b_SQLite.json --output_path merged_output.json
+python experiments/combine_predicts_with_gold.py --ground_truth_path mini_dev/data/mini_dev_sqlite.json --predicted_sql_path mini_dev/llm/exp_result/mini_dev/gpt-oss-120b_SQLite.json --output_path merged_output.json
+```
+
+## error_analysis.py
+
+Performs error analysis on the annotated benchmark results and generates a visualization of error distributions.
+
+Example:
+```
+python experiments/error_analysis.py
 ```
