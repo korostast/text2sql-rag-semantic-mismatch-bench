@@ -1,0 +1,3 @@
+[submodule "artifacts/mini_dev_ru_mod"]
+	path = artifacts/mini_dev_ru_mod
+	url = https://github.com/korostast/bird_mini_dev_ru_mod
