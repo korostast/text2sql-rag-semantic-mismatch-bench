@@ -28,3 +28,31 @@ Example:
 ```
 python experiments/error_analysis.py
 ```
+
+## compare_translation.py
+
+Compares original BIRD mini_dev vs ours mini_dev_ru_mod translation results by creating bar charts showing performance differences between the two languages for different models and metrics (EX, R-VES, Soft-F1). Generates two plots: one for baseline and one for dynamic examples with reranking and dynamic values approaches.
+
+Example:
+```
+python experiments/compare_translation.py
+```
+
+## plot_metrics.py
+
+Creates visualizations of metrics by model and experiment type, generating bar charts showing metric values and average percentage gains compared to baseline. Produces individual plots for each metric and a summary plot showing average relative gains.
+
+Example:
+```
+python experiments/plot_metrics.py
+```
+
+
+## latex_metrics_table.py
+
+Generates LaTeX tables for metrics (EX, R-VES, Soft-F1) from evaluation results CSV files. Just for convenience. Highlights the maximum values in bold for easy comparison.
+
+Example:
+```
+python experiments/latex_metrics_table.py
+```
