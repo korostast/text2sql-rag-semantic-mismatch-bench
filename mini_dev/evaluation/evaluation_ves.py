@@ -2,6 +2,7 @@ import argparse
 import json
 import math
 import multiprocessing as mp
+import os
 import sys
 import time
 
@@ -225,7 +226,8 @@ def print_reward_category(exec_results, engine, sql_dialect):
         "sql_dialect": sql_dialect,
         "distribution": exec_results,
     }
-    file_path = "results.json"
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(script_dir, "results.json")
     try:
         with open(file_path) as file:
             data = json.load(file)
