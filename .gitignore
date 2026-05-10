@@ -172,5 +172,9 @@ cython_debug/
 # .env
 # .env.*
 
-data/
+data/*
+!data/.gitkeep
 plans/
+mini_dev/evaluation/eval_result/*
+!mini_dev/evaluation/eval_result/.gitkeep
+mini_dev/llm/exp_result/

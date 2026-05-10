@@ -1,10 +1,11 @@
 #!/bin/bash
-# -------------------------------------------------------------
-# NOTE: run from `mini_dev/llm` folder as `bash run/run_gpt.sh`
-# -------------------------------------------------------------
 
-eval_path='../data/mini_dev_sqlite.json' # _sqlite.json, _mysql.json, _postgresql.json
-db_root_path='../data/dev_databases/'
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+LLM_DIR="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(dirname "$(dirname "$LLM_DIR")")"
+
+eval_path="${PROJECT_ROOT}/data/mini_dev/MINIDEV_sqlite/mini_dev_sqlite.json" # _sqlite.json, _mysql.json, _postgresql.json
+db_root_path="${PROJECT_ROOT}/data/mini_dev/MINIDEV_sqlite/dev_databases/"
 use_knowledge='True'
 mode='mini_dev' # dev, train, mini_dev
 cot='False'
@@ -15,12 +16,12 @@ cot='False'
 sql_dialect='SQLite'
 
 # Choose the output path for the generated SQL queries
-data_kg_output_path='./exp_result/mini_dev/'
+data_kg_output_path="${LLM_DIR}/exp_result/mini_dev/"
 
 # Base LLM. Fill the arrays to run multiple experiments sequantially
 llm_api_keys=('<apikey>')
 llm_urls=('<url>')
-llm_models=('openai/gpt-oss-120b')
+llm_models=('openai/gpt-oss-20b')
 
 # Choose the number of threads to run in parallel for each model above, 1 for single thread
 num_threads=(4)
@@ -48,8 +49,8 @@ value_search_index_name='bird_dev_values'
 
 if [ "$dynamic_examples_few_shot" = "True" ]; then
     echo "Indexing training data to OpenSearch..."
-    python3 -u ./src/index_training_data.py \
-        --train_path ../../data/train/train.json \
+    python3 -u "${LLM_DIR}/src/index_training_data.py" \
+        --train_path "${PROJECT_ROOT}/data/train/train.json" \
         --opensearch_url "${opensearch_url}" \
         --embedder_url "${embedder_url}" \
         --embedder_model "${embedder_model}" \
@@ -58,8 +59,8 @@ fi
 
 if [ "$dynamic_value_few_shots" = "True" ]; then
     echo "Indexing dev database values to OpenSearch..."
-    python3 -u ./src/index_dev_values.py \
-        --dev_tables_path ../data/dev_tables.json \
+    python3 -u "${LLM_DIR}/src/index_dev_values.py" \
+        --dev_tables_path "${PROJECT_ROOT}/data/dev_tables.json" \
         --db_root_path "${db_root_path}" \
         --opensearch_url "${opensearch_url}" \
         --embedder_url "${embedder_url}" \
@@ -75,7 +76,7 @@ for i in "${!llm_models[@]}"; do
     current_num_threads="${num_threads[$i]}"
 
     echo "generate $llm_model batch, run in $current_num_threads threads, with knowledge: $use_knowledge, with chain of thought: $cot, with dynamic few-shot: $dynamic_examples_few_shot, with reranking: $rerank_dynamic_few_shots, with dynamic value few-shots: $dynamic_value_few_shots"
-    python3 -u ./src/gpt_request.py --db_root_path "${db_root_path}" --llm_api_key "${llm_api_key}" --mode "${mode}" \
+    python3 -u "${LLM_DIR}/src/gpt_request.py" --db_root_path "${db_root_path}" --llm_api_key "${llm_api_key}" --mode "${mode}" \
     --llm_model "${llm_model}" --eval_path "${eval_path}" --data_output_path "${data_kg_output_path}" --use_knowledge "${use_knowledge}" \
     --chain_of_thought "${cot}" --num_process "${current_num_threads}" --sql_dialect "${sql_dialect}" --llm_url "${llm_url}" \
     --dynamic_examples_few_shot "${dynamic_examples_few_shot}" --opensearch_url "${opensearch_url}" \

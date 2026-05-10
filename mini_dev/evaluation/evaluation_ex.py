@@ -124,6 +124,10 @@ def generate_evaluated_json(
 ):
     contents = load_jsonl(diff_json_path)
     base_filename = os.path.basename(predicted_sql_path).replace(".json", "")
+    if not os.path.isabs(output_dir):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        output_dir = os.path.join(script_dir, output_dir)
+
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"{base_filename}_evaluated.json")
 

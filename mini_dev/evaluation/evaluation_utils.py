@@ -8,7 +8,8 @@ from datetime import datetime
 import psycopg2
 import pymysql
 
-CSV_OUTPUT_PATH = "eval_result/results.csv"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_OUTPUT_PATH = os.path.join(SCRIPT_DIR, "eval_result/results.csv")
 
 
 def classify_experiment_type(model_name):
@@ -36,12 +37,8 @@ def clean_model_name(model_name):
 
 
 def load_jsonl(file_path):
-    data = []
     with open(file_path) as file:
-        for line in file:
-            data.append(json.loads(line))
-
-    return data
+        return json.load(file)
 
 
 def load_json(dir):
@@ -156,7 +153,8 @@ def save_results_to_csv(
     model_type = classify_experiment_type(model_name)
     clean_model = clean_model_name(model_name)
 
-    os.makedirs(os.path.dirname(CSV_OUTPUT_PATH), exist_ok=True)
+    csv_dir = os.path.dirname(CSV_OUTPUT_PATH)
+    os.makedirs(csv_dir, exist_ok=True)
     file_exists = os.path.exists(CSV_OUTPUT_PATH)
 
     with open(CSV_OUTPUT_PATH, "a", newline="") as csvfile:
