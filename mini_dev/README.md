@@ -1,6 +1,6 @@
 # BIRD-SQL Mini-Dev
 
-This repository is distributed exclusively for scientific purposes. It is based on ![BIRD mini_dev bench](https://github.com/bird-bench/mini_dev). Please, refer to original repository to get more information about BIRD benchmark, data and metrics.
+This repository is distributed exclusively for scientific purposes. It is based on [BIRD mini_dev bench](https://github.com/bird-bench/mini_dev). Please, refer to original repository to get more information about BIRD benchmark, data and metrics.
 We have fixed several small bugs in benchmark inference and model evaluation and adapt it to our research needs.
 
 ## Citation
